@@ -38,7 +38,11 @@ export const list = async (origin: string) => {
   return clones;
 };
 
-export const clone = async (origin: string, ref: string = 'HEAD') => {
+export const clone = async (
+  origin: string,
+  ref: string = 'HEAD',
+  npmInstall: string = 'npm install',
+) => {
   const directory = await deriveDirectory(origin, ref);
   const successfulSetupIndicatorFile = path.resolve(
     directory,
@@ -60,7 +64,9 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
       await git.fetch('origin', ref, { '--depth': 1 });
       await git.checkout(ref);
 
-      child_process.spawnSync('npm', ['install'], {
+      const [packageManager, ...installCommand] = npmInstall.split(' ');
+
+      child_process.spawnSync(packageManager, installCommand, {
         cwd: directory,
         stdio: 'inherit',
       });

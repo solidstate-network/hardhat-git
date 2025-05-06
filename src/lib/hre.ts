@@ -6,8 +6,9 @@ import path from 'node:path';
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   hre: HardhatRuntimeEnvironment,
   ref: string = 'HEAD',
+  npmInstall?: string,
 ): Promise<HardhatRuntimeEnvironment> => {
-  const directory = await clone(hre.config.paths.root, ref);
+  const directory = await clone(hre.config.paths.root, ref, npmInstall);
 
   // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(

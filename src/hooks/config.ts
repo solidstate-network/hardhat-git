@@ -1,11 +1,12 @@
-import type { HardhatPluginConfig } from '../types.js';
+import type { HardhatGitConfig } from '../types.js';
 import type {
   ConfigHooks,
   HardhatUserConfigValidationError,
 } from 'hardhat/types/hooks';
 
-// TODO: define default config
-const DEFAULT_CONFIG: HardhatPluginConfig = {};
+const DEFAULT_CONFIG: HardhatGitConfig = {
+  npmInstall: 'npm install',
+};
 
 export default async (): Promise<Partial<ConfigHooks>> => ({
   validateUserConfig: async (userConfig) => {
@@ -20,9 +21,9 @@ export default async (): Promise<Partial<ConfigHooks>> => ({
     return {
       ...(await next(userConfig, resolveConfigurationVariable)),
       // TODO: rename config keys
-      hardhatPlugin: {
+      git: {
         ...DEFAULT_CONFIG,
-        ...userConfig.hardhatPlugin,
+        ...userConfig.git,
       },
     };
   },

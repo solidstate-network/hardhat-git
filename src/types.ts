@@ -1,4 +1,5 @@
-// TODO: define configuration parameters
-export type HardhatPluginConfig = {};
+export type HardhatGitConfig = {
+  npmInstall: string;
+};
 
-export type HardhatPluginUserConfig = Partial<HardhatPluginConfig>;
+export type HardhatGitUserConfig = Partial<HardhatGitConfig>;

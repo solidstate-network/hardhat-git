@@ -31,9 +31,9 @@ const config: HardhatUserConfig = {
 
 Add configuration under the `git` key:
 
-| option | description | default |
-| ------ | ----------- | ------- |
-|        |             |         |
+| option       | description                                                   | default         |
+| ------------ | ------------------------------------------------------------- | --------------- |
+| `npmInstall` | Command used to install NPM dependencies in repository clones | `'npm install'` |
 
 ## Development
 

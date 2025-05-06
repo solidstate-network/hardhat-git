@@ -1,12 +1,11 @@
-import { HardhatPluginConfig, HardhatPluginUserConfig } from './types.js';
+import { HardhatGitConfig, HardhatGitUserConfig } from './types.js';
 
 declare module 'hardhat/types/config' {
-  // TODO: rename config keys
   interface HardhatConfig {
-    hardhatPlugin: HardhatPluginConfig;
+    git: HardhatGitConfig;
   }
 
   interface HardhatUserConfig {
-    hardhatPlugin?: HardhatPluginUserConfig;
+    git?: HardhatGitUserConfig;
   }
 }

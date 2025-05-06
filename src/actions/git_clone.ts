@@ -9,7 +9,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  await clone(hre.config.paths.root, args.ref);
+  await clone(hre.config.paths.root, args.ref, hre.config.git.npmInstall);
 };
 
 export default action;
