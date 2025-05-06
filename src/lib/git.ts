@@ -24,6 +24,9 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
     '.setup_successful',
   );
 
+  const git = simpleGit(origin);
+  ref = await git.revparse(ref);
+
   if (!(await exists(origin, ref))) {
     // delete the directory in case a previous setup failed
     await remove(origin, ref);
