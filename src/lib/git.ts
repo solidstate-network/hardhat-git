@@ -7,18 +7,21 @@ import os from 'node:os';
 import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
-export const getTmpHreAtGitRef = async (
+export const deriveTemporaryDirectory = async (
   hre: HardhatRuntimeEnvironment,
-  ref?: string,
-): Promise<HardhatRuntimeEnvironment> => {
-  if (!ref) {
-    return hre;
-  }
-
+  ref: string = 'HEAD',
+): Promise<string> => {
   const git = simpleGit(hre.config.paths.root);
   ref = await git.revparse(ref);
 
-  const tmpdir = path.resolve(os.tmpdir(), pkg.name, ref);
+  return path.resolve(os.tmpdir(), pkg.name, ref);
+};
+
+export const clone = async (
+  hre: HardhatRuntimeEnvironment,
+  ref: string = 'HEAD',
+) => {
+  const tmpdir = await deriveTemporaryDirectory(hre, ref);
   const successfulSetupIndicatorFile = path.resolve(
     tmpdir,
     '.setup_successful',
@@ -26,11 +29,11 @@ export const getTmpHreAtGitRef = async (
 
   if (!fs.existsSync(successfulSetupIndicatorFile)) {
     // delete the directory in case a previous setup failed
-    await fs.promises.rm(tmpdir, { recursive: true, force: true });
+    await remove(hre, ref);
     await fs.promises.mkdir(tmpdir, { recursive: true });
 
     try {
-      await git.cwd(tmpdir);
+      const git = simpleGit(tmpdir);
       await git.init();
       await git.addRemote('origin', hre.config.paths.root);
       await git.fetch('origin', ref, { '--depth': 1 });
@@ -43,10 +46,27 @@ export const getTmpHreAtGitRef = async (
 
       await fs.promises.writeFile(successfulSetupIndicatorFile, '');
     } catch (error) {
-      await fs.promises.rm(tmpdir, { recursive: true, force: true });
+      await remove(hre, ref);
       throw new HardhatPluginError(pkg.name, error as string);
     }
   }
+
+  return tmpdir;
+};
+
+export const remove = async (
+  hre: HardhatRuntimeEnvironment,
+  ref: string = 'HEAD',
+) => {
+  const tmpdir = await deriveTemporaryDirectory(hre, ref);
+  await fs.promises.rm(tmpdir, { recursive: true, force: true });
+};
+
+export const createHardhatRuntimeEnvironmentAtGitRef = async (
+  hre: HardhatRuntimeEnvironment,
+  ref: string = 'HEAD',
+): Promise<HardhatRuntimeEnvironment> => {
+  const tmpdir = await clone(hre, ref);
 
   // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(
