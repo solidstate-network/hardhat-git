@@ -52,33 +52,31 @@ export const clone = async (
   const git = simpleGit(origin);
   ref = await git.revparse(ref);
 
-  if (!(await exists(origin, ref))) {
-    // delete the directory in case a previous setup failed
-    await remove(origin, ref);
-    await fs.promises.mkdir(directory, { recursive: true });
+  // delete the directory in case a clone already exists or
+  // a previous setup failed
+  await remove(origin, ref);
+  await fs.promises.mkdir(directory, { recursive: true });
 
-    try {
-      const git = simpleGit(directory);
-      await git.init();
-      await git.addRemote('origin', origin);
-      await git.fetch('origin', ref, { '--depth': 1 });
-      await git.checkout(ref);
+  try {
+    const git = simpleGit(directory);
+    await git.init();
+    await git.addRemote('origin', origin);
+    await git.fetch('origin', ref, { '--depth': 1 });
+    await git.checkout(ref);
 
-      const [packageManager, ...installCommand] = npmInstall.split(' ');
+    const [packageManager, ...installCommand] = npmInstall.split(' ');
 
-      child_process.spawnSync(packageManager, installCommand, {
-        cwd: directory,
-        stdio: 'inherit',
-      });
+    child_process.spawnSync(packageManager, installCommand, {
+      cwd: directory,
+      stdio: 'inherit',
+    });
 
-      await fs.promises.writeFile(
-        successfulSetupIndicatorFile,
-        new Date().getTime().toString(),
-      );
-    } catch (error) {
-      await remove(origin, ref);
-      throw new HardhatPluginError(pkg.name, error as string);
-    }
+    await fs.promises.writeFile(
+      successfulSetupIndicatorFile,
+      new Date().getTime().toString(),
+    );
+  } catch (error) {
+    throw new HardhatPluginError(pkg.name, error as string);
   }
 
   return directory;

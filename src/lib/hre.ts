@@ -1,4 +1,4 @@
-import { clone } from './git.js';
+import { clone, deriveDirectory, exists } from './git.js';
 import type { HardhatUserConfig } from 'hardhat/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
@@ -8,7 +8,15 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
   ref: string = 'HEAD',
   npmInstall?: string,
 ): Promise<HardhatRuntimeEnvironment> => {
-  const directory = await clone(hre.config.paths.root, ref, npmInstall);
+  const origin = hre.config.paths.root;
+
+  let directory;
+
+  if (await exists(origin, ref)) {
+    directory = await deriveDirectory(origin, ref);
+  } else {
+    directory = await clone(origin, ref, npmInstall);
+  }
 
   // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(

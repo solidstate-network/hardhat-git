@@ -16,5 +16,9 @@ export default task(TASK_GIT_CLONE)
     // TODO: undefined default value
     defaultValue: '',
   })
+  .addFlag({
+    name: 'force',
+    description: 'Delete existing clone and clone again',
+  })
   .setAction(import.meta.resolve('../actions/git_clone.js'))
   .build();
