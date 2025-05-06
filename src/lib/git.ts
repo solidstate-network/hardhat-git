@@ -44,7 +44,12 @@ export class Origin {
   }
 
   private async parseRef(ref: string) {
-    this.refMap[ref] ??= await simpleGit(this.directory).revparse(ref);
+    if (!this.refMap[ref]) {
+      const parsedRef = await simpleGit(this.directory).revparse(ref);
+      this.refMap[ref] = parsedRef;
+      this.refMap[parsedRef] = parsedRef;
+    }
+
     return this.refMap[ref];
   }
 }
