@@ -10,6 +10,7 @@ const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
 
 export class Origin {
   private readonly origin: string;
+  private readonly refMap: { [ref: string]: string } = {};
 
   constructor(origin: string) {
     this.origin = origin;
@@ -38,10 +39,13 @@ export class Origin {
   }
 
   public async checkout(ref: string = 'HEAD') {
-    const git = simpleGit(this.origin);
-    ref = await git.revparse(ref);
-
+    ref = await this.parseRef(ref);
     return new Clone(this.origin, ref);
+  }
+
+  private async parseRef(ref: string) {
+    this.refMap[ref] ??= await simpleGit(this.origin).revparse(ref);
+    return this.refMap[ref];
   }
 }
 
