@@ -47,6 +47,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
+  "dependencies": {
+    "simple-git": "^3.27.0"
+  },
   "publishConfig": {
     "access": "public"
   }
