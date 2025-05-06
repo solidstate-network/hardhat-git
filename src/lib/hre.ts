@@ -20,12 +20,12 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
     )
   );
 
-  const tmpConfigPath = await findClosestHardhatConfig(directory);
-  const tmpConfig = await import(tmpConfigPath);
+  const configPath = await findClosestHardhatConfig(directory);
+  const config = await import(configPath);
 
   return await createHardhatRuntimeEnvironment(
-    tmpConfig.default,
-    { config: tmpConfigPath },
+    config.default,
+    { config: configPath },
     directory,
   );
 };
