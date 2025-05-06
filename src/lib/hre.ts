@@ -1,6 +1,7 @@
 import { clone } from './git.js';
+import type { HardhatUserConfig } from 'hardhat/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
-import path from 'path';
+import path from 'node:path';
 
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   hre: HardhatRuntimeEnvironment,
@@ -20,11 +21,11 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
     )
   );
 
-  const configPath = await findClosestHardhatConfig(directory);
-  const config = await import(configPath);
+  const configPath: string = await findClosestHardhatConfig(directory);
+  const config: HardhatUserConfig = (await import(configPath)).default;
 
   return await createHardhatRuntimeEnvironment(
-    config.default,
+    config,
     { config: configPath },
     directory,
   );
