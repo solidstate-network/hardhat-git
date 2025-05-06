@@ -6,6 +6,8 @@ import taskGitShow from './tasks/git_show.js';
 import './type_extensions.js';
 import type { HardhatPlugin } from 'hardhat/types/plugins';
 
+export * from './lib/hre.js';
+
 const plugin: HardhatPlugin = {
   id: pkg.name!,
   npmPackage: pkg.name!,
