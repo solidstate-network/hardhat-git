@@ -1,4 +1,4 @@
-import { deriveTemporaryDirectory, exists } from '../lib/git.js';
+import { deriveDirectory, exists } from '../lib/git.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
@@ -10,10 +10,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   hre,
 ) => {
   // TODO: print more information
-  const directory = await deriveTemporaryDirectory(
-    hre.config.paths.root,
-    args.ref,
-  );
+  const directory = await deriveDirectory(hre.config.paths.root, args.ref);
   const status = await exists(hre.config.paths.root, args.ref);
   console.log(directory);
   console.log('exists', status);

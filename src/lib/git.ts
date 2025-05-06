@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
-export const deriveTemporaryDirectory = async (
+export const deriveDirectory = async (
   origin: string,
   ref: string = 'HEAD',
 ): Promise<string> => {
@@ -18,7 +18,7 @@ export const deriveTemporaryDirectory = async (
 };
 
 export const clone = async (origin: string, ref: string = 'HEAD') => {
-  const directory = await deriveTemporaryDirectory(origin, ref);
+  const directory = await deriveDirectory(origin, ref);
   const successfulSetupIndicatorFile = path.resolve(
     directory,
     '.setup_successful',
@@ -55,7 +55,7 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
 };
 
 export const exists = async (origin: string, ref: string = 'HEAD') => {
-  const directory = await deriveTemporaryDirectory(origin, ref);
+  const directory = await deriveDirectory(origin, ref);
   const successfulSetupIndicatorFile = path.resolve(
     directory,
     '.setup_successful',
@@ -65,6 +65,6 @@ export const exists = async (origin: string, ref: string = 'HEAD') => {
 };
 
 export const remove = async (origin: string, ref: string = 'HEAD') => {
-  const directory = await deriveTemporaryDirectory(origin, ref);
+  const directory = await deriveDirectory(origin, ref);
   await fs.promises.rm(directory, { recursive: true, force: true });
 };
