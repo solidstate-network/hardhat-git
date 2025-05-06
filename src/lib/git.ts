@@ -43,7 +43,10 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
         stdio: 'inherit',
       });
 
-      await fs.promises.writeFile(successfulSetupIndicatorFile, '');
+      await fs.promises.writeFile(
+        successfulSetupIndicatorFile,
+        new Date().getTime().toString(),
+      );
     } catch (error) {
       await remove(origin, ref);
       throw new HardhatPluginError(pkg.name, error as string);
