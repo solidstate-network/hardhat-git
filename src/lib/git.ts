@@ -1,6 +1,5 @@
 import pkg from '../../package.json';
 import { HardhatPluginError } from 'hardhat/plugins';
-import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import child_process from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
