@@ -18,9 +18,9 @@ export const deriveTemporaryDirectory = async (
 };
 
 export const clone = async (origin: string, ref: string = 'HEAD') => {
-  const tmpdir = await deriveTemporaryDirectory(origin, ref);
+  const directory = await deriveTemporaryDirectory(origin, ref);
   const successfulSetupIndicatorFile = path.resolve(
-    tmpdir,
+    directory,
     '.setup_successful',
   );
 
@@ -30,17 +30,17 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
   if (!(await exists(origin, ref))) {
     // delete the directory in case a previous setup failed
     await remove(origin, ref);
-    await fs.promises.mkdir(tmpdir, { recursive: true });
+    await fs.promises.mkdir(directory, { recursive: true });
 
     try {
-      const git = simpleGit(tmpdir);
+      const git = simpleGit(directory);
       await git.init();
       await git.addRemote('origin', origin);
       await git.fetch('origin', ref, { '--depth': 1 });
       await git.checkout(ref);
 
       child_process.spawnSync('npm', ['install'], {
-        cwd: tmpdir,
+        cwd: directory,
         stdio: 'inherit',
       });
 
@@ -51,13 +51,13 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
     }
   }
 
-  return tmpdir;
+  return directory;
 };
 
 export const exists = async (origin: string, ref: string = 'HEAD') => {
-  const tmpdir = await deriveTemporaryDirectory(origin, ref);
+  const directory = await deriveTemporaryDirectory(origin, ref);
   const successfulSetupIndicatorFile = path.resolve(
-    tmpdir,
+    directory,
     '.setup_successful',
   );
 
@@ -65,34 +65,34 @@ export const exists = async (origin: string, ref: string = 'HEAD') => {
 };
 
 export const remove = async (origin: string, ref: string = 'HEAD') => {
-  const tmpdir = await deriveTemporaryDirectory(origin, ref);
-  await fs.promises.rm(tmpdir, { recursive: true, force: true });
+  const directory = await deriveTemporaryDirectory(origin, ref);
+  await fs.promises.rm(directory, { recursive: true, force: true });
 };
 
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   hre: HardhatRuntimeEnvironment,
   ref: string = 'HEAD',
 ): Promise<HardhatRuntimeEnvironment> => {
-  const tmpdir = await clone(hre.config.paths.root, ref);
+  const directory = await clone(hre.config.paths.root, ref);
 
   // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(
-    path.resolve(tmpdir, 'node_modules/hardhat/dist/src/hre')
+    path.resolve(directory, 'node_modules/hardhat/dist/src/hre')
   );
 
   const { findClosestHardhatConfig } = await import(
     path.resolve(
-      tmpdir,
+      directory,
       'node_modules/hardhat/dist/src/internal/config-loading',
     )
   );
 
-  const tmpConfigPath = await findClosestHardhatConfig(tmpdir);
+  const tmpConfigPath = await findClosestHardhatConfig(directory);
   const tmpConfig = await import(tmpConfigPath);
 
   return await createHardhatRuntimeEnvironment(
     tmpConfig.default,
     { config: tmpConfigPath },
-    tmpdir,
+    directory,
   );
 };
