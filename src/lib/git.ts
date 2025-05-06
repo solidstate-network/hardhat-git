@@ -24,7 +24,7 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
     '.setup_successful',
   );
 
-  if (!fs.existsSync(successfulSetupIndicatorFile)) {
+  if (!(await exists(origin, ref))) {
     // delete the directory in case a previous setup failed
     await remove(origin, ref);
     await fs.promises.mkdir(tmpdir, { recursive: true });
@@ -49,6 +49,16 @@ export const clone = async (origin: string, ref: string = 'HEAD') => {
   }
 
   return tmpdir;
+};
+
+export const exists = async (origin: string, ref: string = 'HEAD') => {
+  const tmpdir = await deriveTemporaryDirectory(origin, ref);
+  const successfulSetupIndicatorFile = path.resolve(
+    tmpdir,
+    '.setup_successful',
+  );
+
+  return fs.existsSync(successfulSetupIndicatorFile);
 };
 
 export const remove = async (origin: string, ref: string = 'HEAD') => {
