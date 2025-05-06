@@ -9,11 +9,11 @@ import { simpleGit } from 'simple-git';
 const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
 
 export class Origin {
-  private readonly origin: string;
+  public readonly directory: string;
   private readonly refMap: { [ref: string]: string } = {};
 
-  constructor(origin: string) {
-    this.origin = origin;
+  constructor(directory: string) {
+    this.directory = directory;
   }
 
   public async list() {
@@ -27,7 +27,7 @@ export class Origin {
         .map((dirent) => dirent.name);
 
       for (const directory of directories) {
-        const clone = new Clone(this.origin, directory);
+        const clone = new Clone(this, directory);
 
         if (await clone.exists()) {
           clones.push(clone);
@@ -40,22 +40,22 @@ export class Origin {
 
   public async checkout(ref: string = 'HEAD') {
     ref = await this.parseRef(ref);
-    return new Clone(this.origin, ref);
+    return new Clone(this, ref);
   }
 
   private async parseRef(ref: string) {
-    this.refMap[ref] ??= await simpleGit(this.origin).revparse(ref);
+    this.refMap[ref] ??= await simpleGit(this.directory).revparse(ref);
     return this.refMap[ref];
   }
 }
 
 export class Clone {
-  public readonly origin: string;
+  public readonly origin: Origin;
   public readonly ref: string;
   public readonly directory: string;
   private readonly successfulSetupIndicatorFile: string;
 
-  constructor(origin: string, ref: string = 'HEAD') {
+  constructor(origin: Origin, ref: string = 'HEAD') {
     this.origin = origin;
     this.ref = ref;
     this.directory = path.resolve(DIRECTORY_BASE, ref);
@@ -78,7 +78,7 @@ export class Clone {
     try {
       const git = simpleGit(this.directory);
       await git.init();
-      await git.addRemote('origin', this.origin);
+      await git.addRemote('origin', this.origin.directory);
       await git.fetch('origin', this.ref, { '--depth': 1 });
       await git.checkout(this.ref);
 
