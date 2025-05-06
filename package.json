@@ -1,10 +1,10 @@
 {
-  "name": "TODO",
+  "name": "@solidstate/hardhat-git",
   "version": "0.0.0",
-  "author": "TODO",
-  "license": "TODO",
-  "repository": "TODO",
-  "description": "TODO",
+  "author": "Nick Barry",
+  "license": "UNLICENSED",
+  "repository": "github:solidstate-network/hardhat-git",
+  "description": "Git-ref-based HRE execution",
   "keywords": [
     "hardhat",
     "buidler",
@@ -16,7 +16,9 @@
     "ether",
     "eth",
     "blockchain",
-    "wow"
+    "wow",
+    "git",
+    "hre"
   ],
   "type": "module",
   "main": "dist/src/index.js",

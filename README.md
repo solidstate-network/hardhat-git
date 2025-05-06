@@ -1,31 +1,27 @@
-# Solidstate Hardhat Plugin Template
+# Hardhat Git
 
-> Note: This repository was generated from a template or is the template itself. To set up a new project, update all values and address all comments marked "TODO" and remove this notice.
+Isolated HRE execution based on Git refs.
 
 ## Installation
 
-<!-- TODO: set package name -->
-
 ```bash
-npm install --save-dev todo
+npm install --save-dev @solidstate/hardhat-git
 # or
-yarn add --dev todo
+yarn add --dev @solidstate/hardhat-git
 ```
 
 ## Usage
 
 Load plugin in Hardhat config:
 
-<!-- TODO: update plugin name and config key -->
-
 ```typescript
-import HardhatPlugin from 'todo';
+import HardhatGit from '@solidstate/hardhat-git';
 
 const config: HardhatUserConfig = {
   plugins: [
-    HardhatPlugin,
+    HardhatGit,
   ],
-  hardhatPlugin: {
+  git: {
     ... // see table for configuration options
   },
 };
@@ -33,7 +29,7 @@ const config: HardhatUserConfig = {
 
 <!-- TODO: populate table and update config key -->
 
-Add configuration under the `hardhatPlugin` key:
+Add configuration under the `git` key:
 
 | option | description | default |
 | ------ | ----------- | ------- |
