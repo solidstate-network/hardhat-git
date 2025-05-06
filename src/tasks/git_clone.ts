@@ -10,5 +10,11 @@ export default task(TASK_GIT_CLONE)
     description: 'Git reference to checkout',
     defaultValue: 'HEAD',
   })
+  .addOption({
+    name: 'npmInstall',
+    description: 'Command to use for NPM dependency installation',
+    // TODO: undefined default value
+    defaultValue: '',
+  })
   .setAction(import.meta.resolve('../actions/git_clone.js'))
   .build();

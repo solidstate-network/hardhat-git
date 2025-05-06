@@ -3,13 +3,15 @@ import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
   ref: string;
+  npmInstall: string;
 }
 
 const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  await clone(hre.config.paths.root, args.ref, hre.config.git.npmInstall);
+  const npmInstall = args.npmInstall || hre.config.git.npmInstall;
+  await clone(hre.config.paths.root, args.ref, npmInstall);
 };
 
 export default action;
