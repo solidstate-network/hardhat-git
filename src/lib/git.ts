@@ -6,6 +6,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { simpleGit } from 'simple-git';
 
+const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
+
 export const deriveDirectory = async (
   origin: string,
   ref: string = 'HEAD',
@@ -13,7 +15,27 @@ export const deriveDirectory = async (
   const git = simpleGit(origin);
   ref = await git.revparse(ref);
 
-  return path.resolve(os.tmpdir(), pkg.name, ref);
+  return path.resolve(DIRECTORY_BASE, ref);
+};
+
+export const list = async (origin: string) => {
+  const clones = [];
+
+  if (fs.existsSync(DIRECTORY_BASE)) {
+    const directories = (
+      await fs.promises.readdir(DIRECTORY_BASE, { withFileTypes: true })
+    )
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => dirent.name);
+
+    for (const directory of directories) {
+      if (await exists(origin, directory)) {
+        clones.push(directory);
+      }
+    }
+  }
+
+  return clones;
 };
 
 export const clone = async (origin: string, ref: string = 'HEAD') => {

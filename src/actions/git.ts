@@ -1,13 +1,14 @@
+import { list } from '../lib/git.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
-// TODO: define task action arguments to match parameters set in task builder
 interface TaskActionArguments {}
 
 const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  // TODO: define task action
+  const clones = await list(hre.config.paths.root);
+  console.log(clones);
 };
 
 export default action;
