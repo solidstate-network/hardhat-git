@@ -1,5 +1,5 @@
 import pkg from '../../package.json';
-import { clone, deriveDirectory, exists } from '../lib/git.js';
+import { Origin } from '../lib/git.js';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
@@ -13,22 +13,20 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  const origin = hre.config.paths.root;
   const { ref } = args;
   const npmInstall = args.npmInstall || hre.config.git.npmInstall;
 
-  if (!args.force && (await exists(origin, ref))) {
-    if (await exists(origin, ref)) {
-      const directory = await deriveDirectory(origin, ref);
+  const origin = new Origin(hre.config.paths.root);
+  const clone = await origin.checkout(ref);
 
-      throw new HardhatPluginError(
-        pkg.name,
-        `Clone of ref ${ref} already exists at ${directory}.`,
-      );
-    }
+  if (!args.force && (await clone.exists())) {
+    throw new HardhatPluginError(
+      pkg.name,
+      `Clone of ref ${ref} already exists at ${clone.directory}.`,
+    );
   }
 
-  await clone(origin, ref, npmInstall);
+  await clone.clone(npmInstall);
 };
 
 export default action;

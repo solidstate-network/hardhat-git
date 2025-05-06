@@ -1,4 +1,4 @@
-import { remove } from '../lib/git.js';
+import { Origin } from '../lib/git.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
@@ -9,7 +9,9 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  await remove(hre.config.paths.root, args.ref);
+  const origin = new Origin(hre.config.paths.root);
+  const clone = await origin.checkout(args.ref);
+  await clone.remove();
 };
 
 export default action;

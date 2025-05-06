@@ -8,91 +8,93 @@ import { simpleGit } from 'simple-git';
 
 const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
 
-export const deriveDirectory = async (
-  origin: string,
-  ref: string = 'HEAD',
-): Promise<string> => {
-  const git = simpleGit(origin);
-  ref = await git.revparse(ref);
+export class Origin {
+  private readonly origin: string;
 
-  return path.resolve(DIRECTORY_BASE, ref);
-};
+  constructor(origin: string) {
+    this.origin = origin;
+  }
 
-export const list = async (origin: string) => {
-  const clones = [];
+  public async list() {
+    const clones = [];
 
-  if (fs.existsSync(DIRECTORY_BASE)) {
-    const directories = (
-      await fs.promises.readdir(DIRECTORY_BASE, { withFileTypes: true })
-    )
-      .filter((dirent) => dirent.isDirectory())
-      .map((dirent) => dirent.name);
+    if (fs.existsSync(DIRECTORY_BASE)) {
+      const directories = (
+        await fs.promises.readdir(DIRECTORY_BASE, { withFileTypes: true })
+      )
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => dirent.name);
 
-    for (const directory of directories) {
-      if (await exists(origin, directory)) {
-        clones.push(directory);
+      for (const directory of directories) {
+        const clone = new Clone(this.origin, directory);
+
+        if (await clone.exists()) {
+          clones.push(clone);
+        }
       }
+    }
+
+    return clones;
+  }
+
+  public async checkout(ref: string = 'HEAD') {
+    const git = simpleGit(this.origin);
+    ref = await git.revparse(ref);
+
+    return new Clone(this.origin, ref);
+  }
+}
+
+export class Clone {
+  public readonly origin: string;
+  public readonly ref: string;
+  public readonly directory: string;
+  private readonly successfulSetupIndicatorFile: string;
+
+  constructor(origin: string, ref: string = 'HEAD') {
+    this.origin = origin;
+    this.ref = ref;
+    this.directory = path.resolve(DIRECTORY_BASE, ref);
+    this.successfulSetupIndicatorFile = path.resolve(
+      this.directory,
+      '.setup_successful',
+    );
+  }
+
+  public async exists() {
+    return fs.existsSync(this.successfulSetupIndicatorFile);
+  }
+
+  public async clone(npmInstall: string = 'npm install') {
+    // delete the directory in case a clone already exists or
+    // a previous setup failed
+    await this.remove();
+    await fs.promises.mkdir(this.directory, { recursive: true });
+
+    try {
+      const git = simpleGit(this.directory);
+      await git.init();
+      await git.addRemote('origin', this.origin);
+      await git.fetch('origin', this.ref, { '--depth': 1 });
+      await git.checkout(this.ref);
+
+      const [packageManager, ...installCommand] = npmInstall.split(' ');
+
+      child_process.spawnSync(packageManager, installCommand, {
+        cwd: this.directory,
+        stdio: 'inherit',
+      });
+
+      await fs.promises.writeFile(
+        this.successfulSetupIndicatorFile,
+        new Date().getTime().toString(),
+      );
+    } catch (error) {
+      throw new HardhatPluginError(pkg.name, error as string);
     }
   }
 
-  return clones;
-};
-
-export const clone = async (
-  origin: string,
-  ref: string = 'HEAD',
-  npmInstall: string = 'npm install',
-) => {
-  const directory = await deriveDirectory(origin, ref);
-  const successfulSetupIndicatorFile = path.resolve(
-    directory,
-    '.setup_successful',
-  );
-
-  const git = simpleGit(origin);
-  ref = await git.revparse(ref);
-
-  // delete the directory in case a clone already exists or
-  // a previous setup failed
-  await remove(origin, ref);
-  await fs.promises.mkdir(directory, { recursive: true });
-
-  try {
-    const git = simpleGit(directory);
-    await git.init();
-    await git.addRemote('origin', origin);
-    await git.fetch('origin', ref, { '--depth': 1 });
-    await git.checkout(ref);
-
-    const [packageManager, ...installCommand] = npmInstall.split(' ');
-
-    child_process.spawnSync(packageManager, installCommand, {
-      cwd: directory,
-      stdio: 'inherit',
-    });
-
-    await fs.promises.writeFile(
-      successfulSetupIndicatorFile,
-      new Date().getTime().toString(),
-    );
-  } catch (error) {
-    throw new HardhatPluginError(pkg.name, error as string);
+  public async remove() {
+    await fs.promises.rm(this.directory, { recursive: true, force: true });
   }
-
-  return directory;
-};
-
-export const exists = async (origin: string, ref: string = 'HEAD') => {
-  const directory = await deriveDirectory(origin, ref);
-  const successfulSetupIndicatorFile = path.resolve(
-    directory,
-    '.setup_successful',
-  );
-
-  return fs.existsSync(successfulSetupIndicatorFile);
-};
-
-export const remove = async (origin: string, ref: string = 'HEAD') => {
-  const directory = await deriveDirectory(origin, ref);
-  await fs.promises.rm(directory, { recursive: true, force: true });
-};
+}
