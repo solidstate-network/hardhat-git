@@ -27,15 +27,28 @@ export class Origin {
         .map((dirent) => dirent.name);
 
       for (const directory of directories) {
-        const clone = new Clone(this, directory);
+        if (await this.hasRef(directory)) {
+          const clone = new Clone(this, directory);
 
-        if (await clone.exists()) {
-          clones.push(clone);
+          if (await clone.exists()) {
+            clones.push(clone);
+          }
         }
       }
     }
 
     return clones;
+  }
+
+  public async hasRef(ref: string = 'HEAD') {
+    try {
+      // parseRef will revert if ref does not exist
+      // as a side effect, successfully parsed refs are cached
+      await this.parseRef(ref);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   public async checkout(ref: string = 'HEAD') {
