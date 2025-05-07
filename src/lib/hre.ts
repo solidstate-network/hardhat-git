@@ -12,7 +12,7 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
   const clone = await origin.checkout(ref);
 
   if (!(await clone.isInitialized())) {
-    await clone.initialize();
+    await clone.initialize(npmInstall);
   }
 
   const { directory } = clone;
