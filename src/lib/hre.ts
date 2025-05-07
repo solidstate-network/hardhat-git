@@ -13,7 +13,7 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
   const origin = new Origin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
-  if (!(await clone.exists())) {
+  if (!(await clone.isInitialized())) {
     await clone.initialize();
   }
 

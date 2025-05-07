@@ -17,7 +17,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   const origin = new Origin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
-  if (!force && !(await clone.exists())) {
+  if (!force && !(await clone.isInitialized())) {
     throw new HardhatPluginError(
       pkg.name,
       `Clone of ref ${ref} does not exist`,

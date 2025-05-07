@@ -13,10 +13,10 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   const origin = new Origin(hre.config.paths.root);
   const clone = await origin.checkout(args.ref);
 
-  const status = await clone.exists();
+  const status = await clone.isInitialized();
 
   console.log(clone.directory);
-  console.log('exists', status);
+  console.log('initialized', status);
 };
 
 export default action;

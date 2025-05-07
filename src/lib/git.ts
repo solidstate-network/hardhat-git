@@ -30,7 +30,7 @@ export class Origin {
         if (await this.hasRef(directory)) {
           const clone = new Clone(this, directory);
 
-          if (await clone.exists()) {
+          if (await clone.isInitialized()) {
             clones.push(clone);
           }
         }
@@ -83,7 +83,7 @@ export class Clone {
     );
   }
 
-  public async exists() {
+  public async isInitialized() {
     return fs.existsSync(this.successfulSetupIndicatorFile);
   }
 
