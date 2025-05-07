@@ -20,7 +20,6 @@ export default async (): Promise<Partial<ConfigHooks>> => ({
   resolveUserConfig: async (userConfig, resolveConfigurationVariable, next) => {
     return {
       ...(await next(userConfig, resolveConfigurationVariable)),
-      // TODO: rename config keys
       git: {
         ...DEFAULT_CONFIG,
         ...userConfig.git,
