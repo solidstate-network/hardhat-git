@@ -13,13 +13,13 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  const { ref } = args;
+  const { ref, force } = args;
   const npmInstall = args.npmInstall || hre.config.git.npmInstall;
 
   const origin = new Origin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
-  if (!args.force && (await clone.exists())) {
+  if (!force && (await clone.exists())) {
     throw new HardhatPluginError(
       pkg.name,
       `Clone of ref ${ref} already exists at ${clone.directory}.`,

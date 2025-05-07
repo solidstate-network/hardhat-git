@@ -10,5 +10,9 @@ export default task(TASK_GIT_REMOVE)
     description: 'Git reference whose clone to delete',
     defaultValue: 'HEAD',
   })
+  .addFlag({
+    name: 'force',
+    description: 'Do not throw error if clone does not exist',
+  })
   .setAction(import.meta.resolve('../actions/git_remove.js'))
   .build();

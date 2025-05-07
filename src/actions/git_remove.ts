@@ -5,18 +5,19 @@ import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
   ref: string;
+  force: boolean;
 }
 
 const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  const { ref } = args;
+  const { ref, force } = args;
 
   const origin = new Origin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
-  if (!(await clone.exists())) {
+  if (!force && !(await clone.exists())) {
     throw new HardhatPluginError(
       pkg.name,
       `Clone of ref ${ref} does not exist`,
