@@ -9,14 +9,16 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  // TODO: print more information
+  const { ref } = args;
+
   const origin = new HardhatGitOrigin(hre.config.paths.root);
-  const clone = await origin.checkout(args.ref);
+  const clone = await origin.checkout(ref);
 
   const status = await clone.isInitialized();
 
-  console.log(clone.directory);
-  console.log('initialized', status);
+  console.log('Parsed ref:', clone.ref);
+  console.log('Directory:', clone.directory);
+  console.log('Initialized:', status);
 };
 
 export default action;

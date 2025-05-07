@@ -27,6 +27,10 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   }
 
   await clone.initialize(npmInstall);
+
+  console.log(
+    `Checked out ref ${clone.ref} and initialized clone at ${clone.directory}.`,
+  );
 };
 
 export default action;

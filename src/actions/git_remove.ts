@@ -25,6 +25,8 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   }
 
   await clone.remove();
+
+  console.log(`Deleted clone of ref ${clone.ref} at ${clone.directory}.`);
 };
 
 export default action;
