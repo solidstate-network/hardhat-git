@@ -12,7 +12,35 @@ yarn add --dev @solidstate/hardhat-git
 
 ## Usage
 
-Load plugin in Hardhat config:
+<!-- TODO: link hardhat-storage-layout-diff and hardhat-contract-sizer examples -->
+
+This plugin is primarily intended to be a dependency for other plugins. It exposes a custom HRE factory which does the following:
+
+- Create a temporary clone of the current repository.
+- Check out the given git reference.
+- Install NPM dependencies.
+
+The returned HRE instance can be used just like a standard HRE.
+
+Load the factory and checkout a git reference:
+
+```typescript
+import { createHardhatRuntimeEnvironmentAtGitRef } from '@solidstate/hardhat-git';
+
+const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(hre, 'HEAD~1');
+```
+
+Optionally declare the plugin as a dependency to expose the helper tasks:
+
+```typescript
+import HardhatGit from '@solidstate/hardhat-git';
+
+const plugin: HardhatPlugin = {
+  dependencies: [HardhatGit],
+};
+```
+
+Load plugin standalone in Hardhat config:
 
 ```typescript
 import HardhatGit from '@solidstate/hardhat-git';
@@ -26,8 +54,6 @@ const config: HardhatUserConfig = {
   },
 };
 ```
-
-<!-- TODO: populate table and update config key -->
 
 Add configuration under the `git` key:
 
