@@ -1,8 +1,7 @@
 import { TASK_GIT } from '../task_names.js';
 import { task } from 'hardhat/config';
 
-// TODO: set task parameters
 export default task(TASK_GIT)
-  .setDescription('TODO: description')
+  .setDescription('Print information about all existing clones')
   .setAction(import.meta.resolve('../actions/git.js'))
   .build();
