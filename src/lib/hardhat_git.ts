@@ -67,7 +67,7 @@ export class HardhatGitOrigin {
   }
 }
 
-class HardhatGitClone {
+export class HardhatGitClone {
   public readonly origin: HardhatGitOrigin;
   public readonly ref: string;
   public readonly directory: string;

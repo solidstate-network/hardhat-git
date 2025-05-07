@@ -1,4 +1,5 @@
 import { HardhatGitOrigin } from '../lib/hardhat_git.js';
+import { printClone } from '../lib/print.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
@@ -14,11 +15,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   const origin = new HardhatGitOrigin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
-  const status = await clone.isInitialized();
-
-  console.log('Parsed ref:', clone.ref);
-  console.log('Directory:', clone.directory);
-  console.log('Initialized:', status);
+  await printClone(clone);
 };
 
 export default action;
