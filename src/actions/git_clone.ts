@@ -26,7 +26,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
     );
   }
 
-  await clone.clone(npmInstall);
+  await clone.initialize(npmInstall);
 };
 
 export default action;

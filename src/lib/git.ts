@@ -87,7 +87,7 @@ export class Clone {
     return fs.existsSync(this.successfulSetupIndicatorFile);
   }
 
-  public async clone(npmInstall: string = 'npm install') {
+  public async initialize(npmInstall: string = 'npm install') {
     // delete the directory in case a clone already exists or
     // a previous setup failed
     await this.remove();

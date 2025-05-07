@@ -14,7 +14,7 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
   const clone = await origin.checkout(ref);
 
   if (!(await clone.exists())) {
-    await clone.clone();
+    await clone.initialize();
   }
 
   const { directory } = clone;
