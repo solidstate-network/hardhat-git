@@ -11,7 +11,11 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   const origin = new HardhatGitOrigin(hre.config.paths.root);
   const clones = await origin.list();
 
-  await printClones(clones);
+  if (clones.length) {
+    await printClones(clones);
+  } else {
+    console.log('No clones found.');
+  }
 };
 
 export default action;
