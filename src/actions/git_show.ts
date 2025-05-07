@@ -1,4 +1,4 @@
-import { Origin } from '../lib/git.js';
+import { HardhatGitOrigin } from '../lib/git.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
@@ -10,7 +10,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   hre,
 ) => {
   // TODO: print more information
-  const origin = new Origin(hre.config.paths.root);
+  const origin = new HardhatGitOrigin(hre.config.paths.root);
   const clone = await origin.checkout(args.ref);
 
   const status = await clone.isInitialized();

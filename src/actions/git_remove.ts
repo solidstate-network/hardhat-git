@@ -1,5 +1,5 @@
 import pkg from '../../package.json';
-import { Origin } from '../lib/git.js';
+import { HardhatGitOrigin } from '../lib/git.js';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
@@ -14,7 +14,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
 ) => {
   const { ref, force } = args;
 
-  const origin = new Origin(hre.config.paths.root);
+  const origin = new HardhatGitOrigin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
   if (!force && !(await clone.isInitialized())) {

@@ -8,7 +8,7 @@ import { simpleGit } from 'simple-git';
 
 const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
 
-export class Origin {
+export class HardhatGitOrigin {
   public readonly directory: string;
   private readonly refMap: { [ref: string]: string } = {};
 
@@ -28,7 +28,7 @@ export class Origin {
 
       for (const directory of directories) {
         if (await this.hasRef(directory)) {
-          const clone = new Clone(this, directory);
+          const clone = new HardhatGitClone(this, directory);
 
           if (await clone.isInitialized()) {
             clones.push(clone);
@@ -53,7 +53,7 @@ export class Origin {
 
   public async checkout(ref: string = 'HEAD') {
     ref = await this.parseRef(ref);
-    return new Clone(this, ref);
+    return new HardhatGitClone(this, ref);
   }
 
   private async parseRef(ref: string) {
@@ -67,13 +67,13 @@ export class Origin {
   }
 }
 
-class Clone {
-  public readonly origin: Origin;
+class HardhatGitClone {
+  public readonly origin: HardhatGitOrigin;
   public readonly ref: string;
   public readonly directory: string;
   private readonly successfulSetupIndicatorFile: string;
 
-  constructor(origin: Origin, ref: string = 'HEAD') {
+  constructor(origin: HardhatGitOrigin, ref: string = 'HEAD') {
     this.origin = origin;
     this.ref = ref;
     this.directory = path.resolve(DIRECTORY_BASE, ref);
