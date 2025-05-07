@@ -67,7 +67,7 @@ export class Origin {
   }
 }
 
-export class Clone {
+class Clone {
   public readonly origin: Origin;
   public readonly ref: string;
   public readonly directory: string;
