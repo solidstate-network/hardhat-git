@@ -1,4 +1,4 @@
-import { HardhatGitOrigin } from '../lib/git.js';
+import { HardhatGitOrigin } from '../lib/hardhat_git.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {}

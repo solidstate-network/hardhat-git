@@ -1,5 +1,5 @@
 import pkg from '../../package.json';
-import { HardhatGitOrigin } from '../lib/git.js';
+import { HardhatGitOrigin } from '../lib/hardhat_git.js';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 

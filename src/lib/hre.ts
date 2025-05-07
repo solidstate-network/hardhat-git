@@ -1,4 +1,4 @@
-import { HardhatGitOrigin } from './git.js';
+import { HardhatGitOrigin } from './hardhat_git.js';
 import type { HardhatUserConfig } from 'hardhat/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
