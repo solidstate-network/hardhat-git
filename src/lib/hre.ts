@@ -4,7 +4,7 @@ import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
 
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
-  hre: HardhatRuntimeEnvironment,
+  hre: Pick<HardhatRuntimeEnvironment, 'config'>,
   ref: string = 'HEAD',
   npmInstall?: string,
 ): Promise<HardhatRuntimeEnvironment> => {
