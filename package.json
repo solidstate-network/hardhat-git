@@ -1,9 +1,6 @@
 {
   "name": "@solidstate/hardhat-git",
   "version": "0.0.0",
-  "author": "Nick Barry",
-  "license": "UNLICENSED",
-  "repository": "github:solidstate-network/hardhat-git",
   "description": "Git-ref-based HRE execution",
   "keywords": [
     "hardhat",
@@ -20,21 +17,26 @@
     "git",
     "hre"
   ],
+  "repository": "github:solidstate-network/hardhat-git",
+  "license": "UNLICENSED",
+  "author": "Nick Barry",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "files": [
+    "dist/",
+    "src/"
+  ],
   "scripts": {
     "build": "yarn clean && tsc --build",
     "clean": "tsc --build --clean",
     "prepare": "husky",
     "prettier": "prettier --write ."
   },
-  "files": [
-    "dist/",
-    "src/"
-  ],
-  "peerDependencies": {
-    "hardhat": "^3.0.0-next.6"
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -43,14 +45,13 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.1",
     "prettier": "^3.5.3",
+    "prettier-plugin-packagejson": "^2.5.11",
     "prettier-plugin-solidity": "^2.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
-  "dependencies": {
-    "chalk": "^5.4.1",
-    "cli-table3": "^0.6.5",
-    "simple-git": "^3.27.0"
+  "peerDependencies": {
+    "hardhat": "^3.0.0-next.6"
   },
   "publishConfig": {
     "access": "public"
