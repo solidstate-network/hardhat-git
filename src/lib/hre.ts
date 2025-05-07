@@ -6,8 +6,6 @@ import path from 'node:path';
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   hre: HardhatRuntimeEnvironment,
   ref: string = 'HEAD',
-  // TODO: partial HardhatUserConfig type
-  additionalConfig?: HardhatUserConfig,
   npmInstall?: string,
 ): Promise<HardhatRuntimeEnvironment> => {
   const origin = new HardhatGitOrigin(hre.config.paths.root);
