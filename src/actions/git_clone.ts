@@ -5,7 +5,7 @@ import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
   ref: string;
-  npmInstall: string;
+  npmInstall?: string;
   force: boolean;
 }
 
@@ -14,7 +14,7 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   hre,
 ) => {
   const { ref, force } = args;
-  const npmInstall = args.npmInstall || hre.config.git.npmInstall;
+  const npmInstall = args.npmInstall ?? hre.config.git.npmInstall;
 
   const origin = new HardhatGitOrigin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
