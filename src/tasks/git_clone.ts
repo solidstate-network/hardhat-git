@@ -1,5 +1,6 @@
 import { TASK_GIT_CLONE } from '../task_names.js';
 import { task } from 'hardhat/config';
+import { ArgumentType } from 'hardhat/types/arguments';
 
 export default task(TASK_GIT_CLONE)
   .setDescription(
@@ -13,8 +14,8 @@ export default task(TASK_GIT_CLONE)
   .addOption({
     name: 'npmInstall',
     description: 'Command to use for NPM dependency installation',
-    // TODO: undefined default value
-    defaultValue: '',
+    defaultValue: undefined,
+    type: ArgumentType.STRING_WITHOUT_DEFAULT,
   })
   .addFlag({
     name: 'force',
