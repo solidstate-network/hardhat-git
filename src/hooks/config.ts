@@ -1,9 +1,7 @@
 import type { HardhatGitConfig } from '../types.js';
 import type { ConfigHooks } from 'hardhat/types/hooks';
 
-const DEFAULT_CONFIG: HardhatGitConfig = {
-  npmInstall: 'npm install',
-};
+const DEFAULT_CONFIG: HardhatGitConfig = {};
 
 export default async (): Promise<Partial<ConfigHooks>> => ({
   resolveUserConfig: async (userConfig, resolveConfigurationVariable, next) => {

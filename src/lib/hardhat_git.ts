@@ -4,6 +4,7 @@ import child_process from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { detect as detectPackageManager } from 'package-manager-detector';
 import { simpleGit } from 'simple-git';
 
 const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
@@ -87,7 +88,7 @@ export class HardhatGitClone {
     return fs.existsSync(this.successfulSetupIndicatorFile);
   }
 
-  public async initialize(npmInstall: string = 'npm install') {
+  public async initialize(npmInstall?: string) {
     // delete the directory in case a clone already exists or
     // a previous setup failed
     await this.remove();
@@ -99,6 +100,8 @@ export class HardhatGitClone {
       await git.addRemote('origin', this.origin.directory);
       await git.fetch('origin', this.ref, { '--depth': 1 });
       await git.checkout(this.ref);
+
+      npmInstall ??= await this.inferNpmInstallCommand();
 
       const [packageManager, ...installCommand] = npmInstall.split(' ');
 
@@ -118,5 +121,15 @@ export class HardhatGitClone {
 
   public async remove() {
     await fs.promises.rm(this.directory, { recursive: true, force: true });
+  }
+
+  public async inferPackageManager() {
+    const result = await detectPackageManager({ cwd: this.directory });
+    return result ? result.name : 'npm';
+  }
+
+  public async inferNpmInstallCommand() {
+    const packageManager = await this.inferPackageManager();
+    return `${packageManager} install`;
   }
 }
