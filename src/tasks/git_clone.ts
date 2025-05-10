@@ -11,12 +11,6 @@ export default task(TASK_GIT_CLONE)
     description: 'Git reference to checkout',
     defaultValue: 'HEAD',
   })
-  .addOption({
-    name: 'npmInstall',
-    description: 'Command to use for NPM dependency installation',
-    defaultValue: undefined,
-    type: ArgumentType.STRING_WITHOUT_DEFAULT,
-  })
   .addFlag({
     name: 'force',
     description: 'Delete existing clone and clone again',

@@ -6,13 +6,12 @@ import path from 'node:path';
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   hre: Pick<HardhatRuntimeEnvironment, 'config'>,
   ref: string = 'HEAD',
-  npmInstall?: string,
 ): Promise<HardhatRuntimeEnvironment> => {
   const origin = new HardhatGitOrigin(hre.config.paths.root);
   const clone = await origin.checkout(ref);
 
   if (!(await clone.isInitialized())) {
-    await clone.initialize(npmInstall);
+    await clone.initialize();
   }
 
   const { directory } = clone;

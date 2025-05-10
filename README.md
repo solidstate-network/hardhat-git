@@ -53,20 +53,9 @@ Load plugin standalone in Hardhat config:
 import HardhatGit from '@solidstate/hardhat-git';
 
 const config: HardhatUserConfig = {
-  plugins: [
-    HardhatGit,
-  ],
-  git: {
-    ... // see table for configuration options
-  },
+  plugins: [HardhatGit],
 };
 ```
-
-Add configuration under the `git` key:
-
-| option       | description                                                   | default                                                               |
-| ------------ | ------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `npmInstall` | Command used to install NPM dependencies in repository clones | inferred via `package-manager-detector`, falls back to`'npm install'` |
 
 ## Development
 
