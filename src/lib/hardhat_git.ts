@@ -88,7 +88,7 @@ export class HardhatGitClone {
     return fs.existsSync(this.successfulSetupIndicatorFile);
   }
 
-  public async initialize() {
+  public async initialize(npmInstall?: string) {
     // delete the directory in case a clone already exists or
     // a previous setup failed
     await this.remove();
@@ -101,9 +101,11 @@ export class HardhatGitClone {
       await git.fetch('origin', this.ref, { '--depth': 1 });
       await git.checkout(this.ref);
 
-      const packageManager = await this.inferPackageManager();
+      npmInstall ??= await this.inferNpmInstallCommand();
 
-      child_process.spawnSync(packageManager, ['install'], {
+      const [packageManager, ...installCommand] = npmInstall.split(' ');
+
+      child_process.spawnSync(packageManager, installCommand, {
         cwd: this.directory,
         stdio: 'inherit',
       });
@@ -124,5 +126,10 @@ export class HardhatGitClone {
   public async inferPackageManager() {
     const result = await detectPackageManager({ cwd: this.directory });
     return result ? result.name : 'npm';
+  }
+
+  public async inferNpmInstallCommand() {
+    const packageManager = await this.inferPackageManager();
+    return `${packageManager} install`;
   }
 }
