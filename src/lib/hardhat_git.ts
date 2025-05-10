@@ -41,7 +41,7 @@ export class HardhatGitOrigin {
     return clones;
   }
 
-  public async hasRef(ref: string = 'HEAD') {
+  public async hasRef(ref: string) {
     try {
       // parseRef will revert if ref does not exist
       // as a side effect, successfully parsed refs are cached
