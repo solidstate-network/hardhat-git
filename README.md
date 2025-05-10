@@ -38,7 +38,12 @@ Optionally declare the plugin as a dependency to expose the helper tasks:
 import HardhatGit from '@solidstate/hardhat-git';
 
 const plugin: HardhatPlugin = {
-  dependencies: [HardhatGit],
+  dependencies: [
+    async () => {
+      const { default: HardhatGit } = await import('@solidstate/hardhat-git');
+      return HardhatGit;
+    },
+  ],
 };
 ```
 
