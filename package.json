@@ -31,7 +31,8 @@
     "build": "yarn clean && tsc --build",
     "clean": "tsc --build --clean",
     "prepare": "husky",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "test": "tsx --test"
   },
   "dependencies": {
     "chalk": "^5.4.1",
