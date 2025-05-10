@@ -31,6 +31,7 @@
     "build": "yarn clean && tsc --build",
     "clean": "tsc --build --clean",
     "prepare": "husky",
+    "prepublishOnly": "yarn build",
     "prettier": "prettier --write .",
     "test": "tsx --test"
   },
