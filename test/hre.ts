@@ -23,7 +23,10 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('creates temporary directory', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(hre, ref);
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      hre.config,
+      ref,
+    );
 
     // make sure that the cached directory is correct
     assert.equal(directory, gitHre.config.paths.root);
@@ -31,7 +34,10 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('clones repository and checks out git ref', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(hre, ref);
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      hre.config,
+      ref,
+    );
 
     const git = simpleGit(gitHre.config.paths.root);
 
@@ -40,7 +46,10 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('installs dependencies', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(hre, ref);
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      hre.config,
+      ref,
+    );
 
     const nodeModulesDirectory = path.resolve(
       gitHre.config.paths.root,
@@ -64,7 +73,10 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   it('installs dependencies using arbitrary command', async () => {
     // TODO: unsafe config modification
     hre.config.git.npmInstall = 'npm install';
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(hre, ref);
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      hre.config,
+      ref,
+    );
 
     const packageLockPath = path.resolve(
       gitHre.config.paths.root,
