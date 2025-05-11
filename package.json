@@ -17,7 +17,7 @@
     "git",
     "hre"
   ],
-  "repository": "github:solidstate-network/hardhat-git",
+  "repository": "github:solidstate-network/hardhat-git.git",
   "license": "UNLICENSED",
   "author": "Nick Barry",
   "type": "module",
