@@ -23,7 +23,8 @@
   "type": "module",
   "exports": {
     ".": "dist/index.js",
-    "./hre": "dist/lib/hre.js"
+    "./hre": "dist/lib/hre.js",
+    "./types": "dist/types.js"
   },
   "types": "dist/index.d.ts",
   "files": [
