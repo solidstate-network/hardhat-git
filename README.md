@@ -35,8 +35,6 @@ const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(hre, 'HEAD~1');
 Optionally declare the plugin as a dependency to expose the helper tasks:
 
 ```typescript
-import HardhatGit from '@solidstate/hardhat-git';
-
 const plugin: HardhatPlugin = {
   dependencies: [
     async () => {
