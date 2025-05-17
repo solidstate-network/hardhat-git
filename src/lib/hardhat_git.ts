@@ -1,13 +1,13 @@
 import pkg from '../../package.json';
+import envPaths from 'env-paths';
 import { HardhatPluginError } from 'hardhat/plugins';
 import child_process from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { detect as detectPackageManager } from 'package-manager-detector';
 import { simpleGit } from 'simple-git';
 
-const DIRECTORY_BASE = path.resolve(os.tmpdir(), pkg.name);
+const DIRECTORY_BASE = envPaths(pkg.name).temp;
 
 export class HardhatGitOrigin {
   public readonly directory: string;

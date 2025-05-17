@@ -1,9 +1,9 @@
 import pkg from '../package.json';
 import { createHardhatRuntimeEnvironmentAtGitRef } from '../src/index.js';
+import envPaths from 'env-paths';
 import hre from 'hardhat';
 import assert from 'node:assert';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import { simpleGit } from 'simple-git';
@@ -11,7 +11,7 @@ import { simpleGit } from 'simple-git';
 // arbitrary git ref
 const ref = '78a30554cd600c1aef47d2f566167e8fe5e3fbe7';
 // directory cached in constant; tested in directory creation test
-const directory = path.resolve(os.tmpdir(), pkg.name, ref);
+const directory = path.resolve(envPaths(pkg.name).temp, ref);
 
 describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   beforeEach(async () => {
