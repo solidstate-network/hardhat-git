@@ -7,7 +7,7 @@ Isolated HRE execution based on Git refs.
 ```bash
 npm install --save-dev @solidstate/hardhat-git
 # or
-yarn add --dev @solidstate/hardhat-git
+pnpm add -D @solidstate/hardhat-git
 ```
 
 ## Usage
@@ -68,14 +68,14 @@ Add configuration under the `git` key:
 
 ## Development
 
-Install dependencies via Yarn:
+Install dependencies via pnpm:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 Setup Husky to format code on commit:
 
 ```bash
-yarn prepare
+pnpm prepare
 ```

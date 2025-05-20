@@ -32,10 +32,10 @@
     "src/"
   ],
   "scripts": {
-    "build": "yarn clean && tsc --build",
+    "build": "pnpm clean && tsc --build",
     "clean": "tsc --build --clean",
     "prepare": "husky",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "pnpm build",
     "prettier": "prettier --write .",
     "test": "tsx --test"
   },

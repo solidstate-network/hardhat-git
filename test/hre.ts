@@ -61,13 +61,16 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
       'package-lock.json',
     );
 
-    const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
+    const pnpmLockPath = path.resolve(
+      gitHre.config.paths.root,
+      'pnpm-lock.yaml',
+    );
 
     assert(fs.existsSync(nodeModulesDirectory));
-    // package-lock.json not present because yarn is the inferred package manager
+    // package-lock.json not present because pnpm is the inferred package manager
     assert(!fs.existsSync(packageLockPath));
-    // yarn.lock present because yarn is the inferred package manager
-    assert(fs.existsSync(yarnLockPath));
+    // pnpm-lock.yaml present because pnpm is the inferred package manager
+    assert(fs.existsSync(pnpmLockPath));
   });
 
   it('installs dependencies using arbitrary command', async () => {
@@ -83,11 +86,14 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
       'package-lock.json',
     );
 
-    const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
+    const pnpmLockPath = path.resolve(
+      gitHre.config.paths.root,
+      'pnpm-lock.yaml',
+    );
 
     // package-lock.json only present because of custom command
     assert(fs.existsSync(packageLockPath));
-    // yarn.lock present because of git tracking
-    assert(fs.existsSync(yarnLockPath));
+    // pnpm-lock.yaml present because of git tracking
+    assert(fs.existsSync(pnpmLockPath));
   });
 });
