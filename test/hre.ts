@@ -9,7 +9,7 @@ import { describe, it, beforeEach, afterEach } from 'node:test';
 import { simpleGit } from 'simple-git';
 
 // arbitrary git ref
-const ref = '78a30554cd600c1aef47d2f566167e8fe5e3fbe7';
+const ref = 'a307fffeeb69102331a671965236f6b87733f2fa';
 // directory cached in constant; tested in directory creation test
 const directory = path.resolve(envPaths(pkg.name).temp, ref);
 
@@ -71,6 +71,45 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
     assert(!fs.existsSync(packageLockPath));
     // pnpm-lock.yaml present because pnpm is the inferred package manager
     assert(fs.existsSync(pnpmLockPath));
+  });
+
+  it('installs dependencies using package manager present at git ref', async () => {
+    // yarn was the package manager in use at this ref
+    const yarnRef = '78a30554cd600c1aef47d2f566167e8fe5e3fbe7';
+
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      hre.config,
+      yarnRef,
+    );
+
+    const nodeModulesDirectory = path.resolve(
+      gitHre.config.paths.root,
+      'node_modules',
+    );
+
+    const packageLockPath = path.resolve(
+      gitHre.config.paths.root,
+      'package-lock.json',
+    );
+
+    const pnpmLockPath = path.resolve(
+      gitHre.config.paths.root,
+      'pnpm-lock.yaml',
+    );
+
+    const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
+
+    assert(fs.existsSync(nodeModulesDirectory));
+    // package-lock.json not present because yarn is the inferred package manager
+    assert(!fs.existsSync(packageLockPath));
+    // pnpm-lock.yaml not present because yarn is the inferred package manager
+    assert(!fs.existsSync(pnpmLockPath));
+    // yarn.lock present because yarn is the inferred package manager
+    assert(fs.existsSync(yarnLockPath));
+
+    // clean up clone of yarn ref
+    const directory = path.resolve(envPaths(pkg.name).temp, yarnRef);
+    await fs.promises.rm(directory, { recursive: true, force: true });
   });
 
   it('installs dependencies using arbitrary command', async () => {
