@@ -22,7 +22,7 @@ The returned HRE instance can be used just like a standard HRE.
 
 <!-- TODO: link to npm website instead of github -->
 
-See the [`@solidstate/hardhat-contract-sizer`](https://github.com/solidstate-network/hardhat-contract-sizer) and [`@solidstate/hardhat-storage-layout-diff`](https://github.com/solidstate-network/hardhat-storage-layout-diff) packages for implementation examples.
+See the [`@solidstate/hardhat-contract-sizer`](https://www.npmjs.com/package/@solidstate/hardhat-contract-sizer) and [`@solidstate/hardhat-storage-layout-diff`](https://github.com/solidstate-network/hardhat-storage-layout-diff) packages for implementation examples.
 
 Load the factory and checkout a git reference:
 
