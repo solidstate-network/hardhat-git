@@ -76,6 +76,8 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   it('installs dependencies using package manager present at git ref', async () => {
     // yarn was the package manager in use at this ref
     const yarnRef = '78a30554cd600c1aef47d2f566167e8fe5e3fbe7';
+    const yarnDirectory = path.resolve(envPaths(pkg.name).temp, yarnRef);
+    assert(!fs.existsSync(yarnDirectory));
 
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       hre.config,
@@ -108,8 +110,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
     assert(fs.existsSync(yarnLockPath));
 
     // clean up clone of yarn ref
-    const directory = path.resolve(envPaths(pkg.name).temp, yarnRef);
-    await fs.promises.rm(directory, { recursive: true, force: true });
+    await fs.promises.rm(yarnDirectory, { recursive: true, force: true });
   });
 
   it('installs dependencies using arbitrary command', async () => {
