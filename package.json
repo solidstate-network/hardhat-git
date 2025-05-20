@@ -37,7 +37,7 @@
     "prepare": "husky",
     "prepublishOnly": "yarn build",
     "prettier": "prettier --write .",
-    "test": "yarn build && node --import tsx/esm --test"
+    "test": "tsx --test"
   },
   "dependencies": {
     "chalk": "^5.4.1",
