@@ -1,5 +1,4 @@
 import { HardhatGitOrigin } from './hardhat_git.js';
-import { deepMerge } from '@nomicfoundation/hardhat-utils/lang';
 import type { HardhatConfig, HardhatUserConfig } from 'hardhat/types/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
@@ -7,7 +6,6 @@ import path from 'node:path';
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   originConfig: HardhatConfig,
   ref: string = 'HEAD',
-  cloneConfig: HardhatUserConfig = {},
 ): Promise<HardhatRuntimeEnvironment> => {
   const origin = new HardhatGitOrigin(originConfig.paths.root);
   const clone = await origin.checkout(ref);
@@ -34,7 +32,7 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
   const config: HardhatUserConfig = (await import(configPath)).default;
 
   return await createHardhatRuntimeEnvironment(
-    deepMerge(config, cloneConfig),
+    config,
     { config: configPath },
     directory,
   );
