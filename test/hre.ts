@@ -2,6 +2,7 @@ import pkg from '../package.json';
 import { createHardhatRuntimeEnvironmentAtGitRef } from '../src/index.js';
 import envPaths from 'env-paths';
 import hre from 'hardhat';
+import { task } from 'hardhat/config';
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -135,5 +136,28 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
     assert(fs.existsSync(packageLockPath));
     // pnpm-lock.yaml present because of git tracking
     assert(fs.existsSync(pnpmLockPath));
+  });
+
+  it('registers plugins', async () => {
+    const taskName = 'temp';
+
+    const plugin = {
+      id: 'temp',
+      tasks: [
+        task(taskName)
+          .setAction(async () => {
+            return taskName;
+          })
+          .build(),
+      ],
+    };
+
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      hre.config,
+      ref,
+      [plugin],
+    );
+
+    assert.equal(await gitHre.tasks.getTask(taskName).run(), taskName);
   });
 });
