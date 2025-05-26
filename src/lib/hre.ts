@@ -6,6 +6,7 @@ import path from 'node:path';
 export const createHardhatRuntimeEnvironmentAtGitRef = async (
   originConfig: HardhatConfig,
   ref: string = 'HEAD',
+  plugins?: HardhatUserConfig['plugins'],
 ): Promise<HardhatRuntimeEnvironment> => {
   const origin = new HardhatGitOrigin(originConfig.paths.root);
   const clone = await origin.checkout(ref);
@@ -30,6 +31,11 @@ export const createHardhatRuntimeEnvironmentAtGitRef = async (
 
   const configPath: string = await findClosestHardhatConfig(directory);
   const config: HardhatUserConfig = (await import(configPath)).default;
+
+  if (plugins && plugins.length) {
+    config.plugins ??= [];
+    config.plugins.push(...plugins);
+  }
 
   return await createHardhatRuntimeEnvironment(
     config,
