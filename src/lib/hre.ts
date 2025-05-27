@@ -31,7 +31,6 @@ export const createHardhatRuntimeEnvironmentAtGitRev = async (
 
   const { default: packageJson } = await import(packageJsonPath);
 
-  // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(
     path.resolve(path.dirname(packageJsonPath), packageJson.exports['./hre'])
   );
