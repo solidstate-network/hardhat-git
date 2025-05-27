@@ -114,7 +114,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
     await fs.promises.rm(yarnDirectory, { recursive: true, force: true });
   });
 
-  it('installs dependencies using arbitrary command', async () => {
+  it('installs dependencies using arbitrary command: npm install', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       { ...hre.config, git: { npmInstall: 'npm install' } },
       ref,
@@ -132,6 +132,44 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
 
     // package-lock.json only present because of custom command
     assert(fs.existsSync(packageLockPath));
+    // pnpm-lock.yaml present because of git tracking
+    assert(fs.existsSync(pnpmLockPath));
+  });
+
+  it('installs dependencies using arbitrary command: bun install', async () => {
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      { ...hre.config, git: { npmInstall: 'bun install' } },
+      ref,
+    );
+
+    const bunLockPath = path.resolve(gitHre.config.paths.root, 'bun.lock');
+
+    const pnpmLockPath = path.resolve(
+      gitHre.config.paths.root,
+      'pnpm-lock.yaml',
+    );
+
+    // bun.lock only present because of custom command
+    assert(fs.existsSync(bunLockPath));
+    // pnpm-lock.yaml present because of git tracking
+    assert(fs.existsSync(pnpmLockPath));
+  });
+
+  it('installs dependencies using arbitrary command: yarn install', async () => {
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+      { ...hre.config, git: { npmInstall: 'yarn install' } },
+      ref,
+    );
+
+    const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
+
+    const pnpmLockPath = path.resolve(
+      gitHre.config.paths.root,
+      'pnpm-lock.yaml',
+    );
+
+    // yarn.lock only present because of custom command
+    assert(fs.existsSync(yarnLockPath));
     // pnpm-lock.yaml present because of git tracking
     assert(fs.existsSync(pnpmLockPath));
   });
