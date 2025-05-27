@@ -1,4 +1,7 @@
+import pkg from '../../package.json';
 import { HardhatGitOrigin } from './hardhat_git.js';
+import { findDependencyPackageJson } from '@nomicfoundation/hardhat-utils/package';
+import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatConfig, HardhatUserConfig } from 'hardhat/types/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
@@ -17,15 +20,26 @@ export const createHardhatRuntimeEnvironmentAtGitRev = async (
 
   const { directory } = clone;
 
+  const packageJsonPath = await findDependencyPackageJson(directory, 'hardhat');
+
+  if (!packageJsonPath) {
+    throw new HardhatPluginError(
+      pkg.name,
+      `no Hardhat installation found at git revision ${rev}`,
+    );
+  }
+
+  const { default: packageJson } = await import(packageJsonPath);
+
   // TODO: fallback to local createHardhatRuntimeEnvironment function
   const { createHardhatRuntimeEnvironment } = await import(
-    path.resolve(directory, 'node_modules/hardhat/dist/src/hre')
+    path.resolve(path.dirname(packageJsonPath), packageJson.exports['./hre'])
   );
 
   const { findClosestHardhatConfig } = await import(
     path.resolve(
-      directory,
-      'node_modules/hardhat/dist/src/internal/config-loading',
+      path.dirname(packageJsonPath),
+      'dist/src/internal/config-loading',
     )
   );
 
