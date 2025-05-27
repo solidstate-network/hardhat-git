@@ -9,62 +9,64 @@ import path from 'node:path';
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import { simpleGit } from 'simple-git';
 
-// pnpm was the package manager in use at this ref
-const ref = 'a307fffeeb69102331a671965236f6b87733f2fa';
-const directory = path.resolve(envPaths(pkg.name).temp, ref);
+const refs = {
+  // pnpm was the package manager in use at this ref
+  pnpm: 'a307fffeeb69102331a671965236f6b87733f2fa',
+  // yarn was the package manager in use at this ref
+  // it is used for package manager inferrence test
+  yarnInferred: '78a30554cd600c1aef47d2f566167e8fe5e3fbe7',
+  // pnpm was the package manager in use at the following refs
+  // they are used for npm, yarn, and bun tests
+  npm: '77bdf11772ef59035b3a083b78d86203ebaa471d',
+  bun: '2fb7bea7ae4250335f415ae076b0325edd4dd846',
+  yarn: 'c336c3902b13566dd3df871ab1d4af9bed3f417b',
+};
 
-// pnpm was the package manager in use at this ref
-// it is used for npm, yarn, and bun tests
-// these package managers appear to use compatible node_modules structure, while pnpm does not
-// this appears to lead to module resolution failures if the ref is cloned with pnpm and another package manager in the same process
-const altRef = '77bdf11772ef59035b3a083b78d86203ebaa471d';
-const altDirectory = path.resolve(envPaths(pkg.name).temp, altRef);
-
-// yarn was the package manager in use at this ref
-// it is used for package manager inferrence test
-const yarnRef = '78a30554cd600c1aef47d2f566167e8fe5e3fbe7';
-const yarnDirectory = path.resolve(envPaths(pkg.name).temp, yarnRef);
+const resolveDirectory = (ref: string) =>
+  path.resolve(envPaths(pkg.name).temp, ref);
 
 describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   beforeEach(async () => {
-    assert(!fs.existsSync(directory));
-    assert(!fs.existsSync(altDirectory));
-    assert(!fs.existsSync(yarnDirectory));
+    for (const ref of Object.values(refs)) {
+      assert(!fs.existsSync(resolveDirectory(ref)));
+    }
   });
 
   afterEach(async () => {
-    await fs.promises.rm(directory, { recursive: true, force: true });
-    await fs.promises.rm(altDirectory, { recursive: true, force: true });
-    await fs.promises.rm(yarnDirectory, { recursive: true, force: true });
+    for (const ref of Object.values(refs)) {
+      await fs.promises.rm(resolveDirectory(ref), {
+        recursive: true,
+        force: true,
+      });
+    }
   });
 
   it('creates temporary directory', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       hre.config,
-      ref,
+      refs.pnpm,
     );
 
-    // make sure that the cached directory is correct
-    assert.equal(directory, gitHre.config.paths.root);
+    assert.equal(resolveDirectory(refs.pnpm), gitHre.config.paths.root);
     assert(fs.existsSync(gitHre.config.paths.root));
   });
 
   it('clones repository and checks out git ref', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       hre.config,
-      ref,
+      refs.pnpm,
     );
 
     const git = simpleGit(gitHre.config.paths.root);
 
     assert(await git.checkIsRepo());
-    assert.equal(await git.revparse('HEAD'), ref);
+    assert.equal(await git.revparse('HEAD'), refs.pnpm);
   });
 
   it('installs dependencies', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       hre.config,
-      ref,
+      refs.pnpm,
     );
 
     const nodeModulesDirectory = path.resolve(
@@ -92,7 +94,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   it('installs dependencies using package manager present at git ref', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       hre.config,
-      yarnRef,
+      refs.yarnInferred,
     );
 
     const nodeModulesDirectory = path.resolve(
@@ -124,7 +126,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   it('installs dependencies using arbitrary command: npm install', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       { ...hre.config, git: { npmInstall: 'npm install' } },
-      altRef,
+      refs.npm,
     );
 
     const packageLockPath = path.resolve(
@@ -146,7 +148,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   it('installs dependencies using arbitrary command: bun install', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       { ...hre.config, git: { npmInstall: 'bun install' } },
-      altRef,
+      refs.bun,
     );
 
     const bunLockPath = path.resolve(gitHre.config.paths.root, 'bun.lock');
@@ -165,7 +167,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   it('installs dependencies using arbitrary command: yarn install', async () => {
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       { ...hre.config, git: { npmInstall: 'yarn install' } },
-      altRef,
+      refs.yarn,
     );
 
     const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
@@ -197,10 +199,19 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
 
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
       hre.config,
-      ref,
+      refs.pnpm,
       [plugin],
     );
 
     assert.equal(await gitHre.tasks.getTask(taskName).run(), taskName);
+  });
+
+  it('throws if dependency reinstallation with different package manager is attempted', async () => {
+    await assert.rejects(
+      createHardhatRuntimeEnvironmentAtGitRef(
+        { ...hre.config, git: { npmInstall: 'yarn install' } },
+        refs.pnpm,
+      ),
+    );
   });
 });

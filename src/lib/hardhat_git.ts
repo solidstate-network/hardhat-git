@@ -9,6 +9,11 @@ import { simpleGit } from 'simple-git';
 
 const DIRECTORY_BASE = envPaths(pkg.name).temp;
 
+// track which package manager has been used to install dependencies for each ref
+// reinstallation using different package managers is unsupported due to module resolution issues
+// (npm, bun, and yarn appear to be compatible, but pnpm is not)
+const packageManagerLock: { [directory: string]: string } = {};
+
 export class HardhatGitOrigin {
   public readonly directory: string;
   private readonly refMap: { [ref: string]: string } = {};
@@ -115,6 +120,15 @@ export class HardhatGitClone {
     npmInstall ??= await this.inferNpmInstallCommand();
 
     const [packageManager, ...installCommand] = npmInstall.split(' ');
+
+    packageManagerLock[this.directory] ??= packageManager;
+
+    if (packageManagerLock[this.directory] !== packageManager) {
+      throw new HardhatPluginError(
+        pkg.name,
+        `unable to reinstall dependencies with multiple package managers: ${packageManagerLock[this.directory]}, ${packageManager}`,
+      );
+    }
 
     try {
       child_process.spawnSync(packageManager, installCommand, {
