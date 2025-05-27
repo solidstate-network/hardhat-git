@@ -115,10 +115,8 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('installs dependencies using arbitrary command', async () => {
-    // TODO: unsafe config modification
-    hre.config.git.npmInstall = 'npm install';
     const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
-      hre.config,
+      { ...hre.config, git: { npmInstall: 'npm install' } },
       ref,
     );
 
