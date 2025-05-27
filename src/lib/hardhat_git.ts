@@ -94,22 +94,40 @@ export class HardhatGitClone {
     await this.remove();
     await fs.promises.mkdir(this.directory, { recursive: true });
 
+    await this.checkout();
+    await this.installDependencies(npmInstall);
+    await this.writeIndicatorFile();
+  }
+
+  private async checkout() {
     try {
       const git = simpleGit(this.directory);
       await git.init();
       await git.addRemote('origin', this.origin.directory);
       await git.fetch('origin', this.ref, { '--depth': 1 });
       await git.checkout(this.ref);
+    } catch (error) {
+      throw new HardhatPluginError(pkg.name, error as string);
+    }
+  }
 
-      npmInstall ??= await this.inferNpmInstallCommand();
+  private async installDependencies(npmInstall?: string) {
+    npmInstall ??= await this.inferNpmInstallCommand();
 
-      const [packageManager, ...installCommand] = npmInstall.split(' ');
+    const [packageManager, ...installCommand] = npmInstall.split(' ');
 
+    try {
       child_process.spawnSync(packageManager, installCommand, {
         cwd: this.directory,
         stdio: 'inherit',
       });
+    } catch (error) {
+      throw new HardhatPluginError(pkg.name, error as string);
+    }
+  }
 
+  private async writeIndicatorFile() {
+    try {
       await fs.promises.writeFile(
         this.successfulSetupIndicatorFile,
         new Date().getTime().toString(),
