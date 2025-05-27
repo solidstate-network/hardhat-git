@@ -1,5 +1,5 @@
 import pkg from '../package.json';
-import { createHardhatRuntimeEnvironmentAtGitRef } from '../src/index.js';
+import { createHardhatRuntimeEnvironmentAtGitRev } from '../src/index.js';
 import envPaths from 'env-paths';
 import hre from 'hardhat';
 import { task } from 'hardhat/config';
@@ -9,32 +9,32 @@ import path from 'node:path';
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import { simpleGit } from 'simple-git';
 
-const refs = {
-  // pnpm was the package manager in use at this ref
+const revs = {
+  // pnpm was the package manager in use at this rev
   pnpm: 'a307fffeeb69102331a671965236f6b87733f2fa',
-  // yarn was the package manager in use at this ref
+  // yarn was the package manager in use at this rev
   // it is used for package manager inferrence test
   yarnInferred: '78a30554cd600c1aef47d2f566167e8fe5e3fbe7',
-  // pnpm was the package manager in use at the following refs
+  // pnpm was the package manager in use at the following revs
   // they are used for npm, yarn, and bun tests
   npm: '77bdf11772ef59035b3a083b78d86203ebaa471d',
   bun: '2fb7bea7ae4250335f415ae076b0325edd4dd846',
   yarn: 'c336c3902b13566dd3df871ab1d4af9bed3f417b',
 };
 
-const resolveDirectory = (ref: string) =>
-  path.resolve(envPaths(pkg.name).temp, ref);
+const resolveDirectory = (rev: string) =>
+  path.resolve(envPaths(pkg.name).temp, rev);
 
-describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
+describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
   beforeEach(async () => {
-    for (const ref of Object.values(refs)) {
-      assert(!fs.existsSync(resolveDirectory(ref)));
+    for (const rev of Object.values(revs)) {
+      assert(!fs.existsSync(resolveDirectory(rev)));
     }
   });
 
   afterEach(async () => {
-    for (const ref of Object.values(refs)) {
-      await fs.promises.rm(resolveDirectory(ref), {
+    for (const rev of Object.values(revs)) {
+      await fs.promises.rm(resolveDirectory(rev), {
         recursive: true,
         force: true,
       });
@@ -42,31 +42,31 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('creates temporary directory', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       hre.config,
-      refs.pnpm,
+      revs.pnpm,
     );
 
-    assert.equal(resolveDirectory(refs.pnpm), gitHre.config.paths.root);
+    assert.equal(resolveDirectory(revs.pnpm), gitHre.config.paths.root);
     assert(fs.existsSync(gitHre.config.paths.root));
   });
 
-  it('clones repository and checks out git ref', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+  it('clones repository and checks out git rev', async () => {
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       hre.config,
-      refs.pnpm,
+      revs.pnpm,
     );
 
     const git = simpleGit(gitHre.config.paths.root);
 
     assert(await git.checkIsRepo());
-    assert.equal(await git.revparse('HEAD'), refs.pnpm);
+    assert.equal(await git.revparse('HEAD'), revs.pnpm);
   });
 
   it('installs dependencies', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       hre.config,
-      refs.pnpm,
+      revs.pnpm,
     );
 
     const nodeModulesDirectory = path.resolve(
@@ -91,10 +91,10 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
     assert(fs.existsSync(pnpmLockPath));
   });
 
-  it('installs dependencies using package manager present at git ref', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+  it('installs dependencies using package manager present at git rev', async () => {
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       hre.config,
-      refs.yarnInferred,
+      revs.yarnInferred,
     );
 
     const nodeModulesDirectory = path.resolve(
@@ -124,9 +124,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('installs dependencies using arbitrary command: npm install', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       { ...hre.config, git: { npmInstall: 'npm install' } },
-      refs.npm,
+      revs.npm,
     );
 
     const packageLockPath = path.resolve(
@@ -146,9 +146,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('installs dependencies using arbitrary command: bun install', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       { ...hre.config, git: { npmInstall: 'bun install' } },
-      refs.bun,
+      revs.bun,
     );
 
     const bunLockPath = path.resolve(gitHre.config.paths.root, 'bun.lock');
@@ -165,9 +165,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
   });
 
   it('installs dependencies using arbitrary command: yarn install', async () => {
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       { ...hre.config, git: { npmInstall: 'yarn install' } },
-      refs.yarn,
+      revs.yarn,
     );
 
     const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
@@ -197,9 +197,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
       ],
     };
 
-    const gitHre = await createHardhatRuntimeEnvironmentAtGitRef(
+    const gitHre = await createHardhatRuntimeEnvironmentAtGitRev(
       hre.config,
-      refs.pnpm,
+      revs.pnpm,
       [plugin],
     );
 
@@ -208,9 +208,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRef', () => {
 
   it('throws if dependency reinstallation with different package manager is attempted', async () => {
     await assert.rejects(
-      createHardhatRuntimeEnvironmentAtGitRef(
+      createHardhatRuntimeEnvironmentAtGitRev(
         { ...hre.config, git: { npmInstall: 'yarn install' } },
-        refs.pnpm,
+        revs.pnpm,
       ),
     );
   });

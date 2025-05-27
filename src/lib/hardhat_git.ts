@@ -9,14 +9,14 @@ import { simpleGit } from 'simple-git';
 
 const DIRECTORY_BASE = envPaths(pkg.name).temp;
 
-// track which package manager has been used to install dependencies for each ref
+// track which package manager has been used to install dependencies for each rev
 // reinstallation using different package managers is unsupported due to module resolution issues
 // (npm, bun, and yarn appear to be compatible, but pnpm is not)
 const packageManagerLock: { [directory: string]: string } = {};
 
 export class HardhatGitOrigin {
   public readonly directory: string;
-  private readonly refMap: { [ref: string]: string } = {};
+  private readonly revMap: { [rev: string]: string } = {};
 
   constructor(directory: string) {
     this.directory = directory;
@@ -33,7 +33,7 @@ export class HardhatGitOrigin {
         .map((dirent) => dirent.name);
 
       for (const directory of directories) {
-        if (await this.hasRef(directory)) {
+        if (await this.hasRev(directory)) {
           const clone = new HardhatGitClone(this, directory);
 
           if (await clone.isInitialized()) {
@@ -46,43 +46,43 @@ export class HardhatGitOrigin {
     return clones;
   }
 
-  public async hasRef(ref: string) {
+  public async hasRev(rev: string) {
     try {
-      // parseRef will revert if ref does not exist
-      // as a side effect, successfully parsed refs are cached
-      await this.parseRef(ref);
+      // parseRev will revert if rev does not exist
+      // as a side effect, successfully parsed revs are cached
+      await this.parseRev(rev);
       return true;
     } catch (error) {
       return false;
     }
   }
 
-  public async checkout(ref: string = 'HEAD') {
-    ref = await this.parseRef(ref);
-    return new HardhatGitClone(this, ref);
+  public async checkout(rev: string = 'HEAD') {
+    rev = await this.parseRev(rev);
+    return new HardhatGitClone(this, rev);
   }
 
-  private async parseRef(ref: string) {
-    if (!this.refMap[ref]) {
-      const parsedRef = await simpleGit(this.directory).revparse(ref);
-      this.refMap[ref] = parsedRef;
-      this.refMap[parsedRef] = parsedRef;
+  private async parseRev(rev: string) {
+    if (!this.revMap[rev]) {
+      const parsedRev = await simpleGit(this.directory).revparse(rev);
+      this.revMap[rev] = parsedRev;
+      this.revMap[parsedRev] = parsedRev;
     }
 
-    return this.refMap[ref];
+    return this.revMap[rev];
   }
 }
 
 export class HardhatGitClone {
   public readonly origin: HardhatGitOrigin;
-  public readonly ref: string;
+  public readonly rev: string;
   public readonly directory: string;
   private readonly successfulSetupIndicatorFile: string;
 
-  constructor(origin: HardhatGitOrigin, ref: string = 'HEAD') {
+  constructor(origin: HardhatGitOrigin, rev: string = 'HEAD') {
     this.origin = origin;
-    this.ref = ref;
-    this.directory = path.resolve(DIRECTORY_BASE, ref);
+    this.rev = rev;
+    this.directory = path.resolve(DIRECTORY_BASE, rev);
     this.successfulSetupIndicatorFile = path.resolve(
       this.directory,
       '.setup_successful',
@@ -109,8 +109,8 @@ export class HardhatGitClone {
       const git = simpleGit(this.directory);
       await git.init();
       await git.addRemote('origin', this.origin.directory);
-      await git.fetch('origin', this.ref, { '--depth': 1 });
-      await git.checkout(this.ref);
+      await git.fetch('origin', this.rev, { '--depth': 1 });
+      await git.checkout(this.rev);
     } catch (error) {
       throw new HardhatPluginError(pkg.name, error as string);
     }

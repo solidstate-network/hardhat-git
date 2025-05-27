@@ -28,7 +28,7 @@ export const printClones = async (clones: HardhatGitClone[]) => {
   });
 
   table.push([
-    { content: chalk.bold('Parsed ref') },
+    { content: chalk.bold('Parsed rev') },
     { content: chalk.bold('Directory') },
     { content: chalk.bold('Initialized') },
   ]);
@@ -36,7 +36,7 @@ export const printClones = async (clones: HardhatGitClone[]) => {
   for (const clone of clones) {
     const isInitialized = await clone.isInitialized();
     table.push([
-      { content: clone.ref },
+      { content: clone.rev },
       { content: clone.directory },
       {
         content: isInitialized

@@ -4,11 +4,11 @@ import { ArgumentType } from 'hardhat/types/arguments';
 
 export default task(TASK_GIT_CLONE)
   .setDescription(
-    'Create a clone of the current git repository at a specified reference',
+    'Create a clone of the current git repository at a specified revision',
   )
   .addPositionalArgument({
-    name: 'ref',
-    description: 'Git reference to checkout',
+    name: 'rev',
+    description: 'Git revision to checkout',
     defaultValue: 'HEAD',
   })
   .addOption({

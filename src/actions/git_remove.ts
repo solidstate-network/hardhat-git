@@ -2,24 +2,24 @@ import { HardhatGitOrigin } from '../lib/hardhat_git.js';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
-  refs: string[];
+  revs: string[];
 }
 
 const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  const { refs } = args;
+  const { revs } = args;
 
   const origin = new HardhatGitOrigin(hre.config.paths.root);
 
-  const clones = refs.length
-    ? await Promise.all(refs.map((ref) => origin.checkout(ref)))
+  const clones = revs.length
+    ? await Promise.all(revs.map((rev) => origin.checkout(rev)))
     : await origin.list();
 
   for (const clone of clones) {
     if (await clone.isInitialized()) {
-      console.log(`Removing clone of ref ${clone.ref} at ${clone.directory}.`);
+      console.log(`Removing clone of rev ${clone.rev} at ${clone.directory}.`);
     }
 
     // remove even if uninitialized in case of failed initialization

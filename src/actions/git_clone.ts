@@ -4,7 +4,7 @@ import { HardhatPluginError } from 'hardhat/plugins';
 import type { NewTaskActionFunction } from 'hardhat/types/tasks';
 
 interface TaskActionArguments {
-  ref: string;
+  rev: string;
   npmInstall?: string;
   force: boolean;
 }
@@ -13,23 +13,23 @@ const action: NewTaskActionFunction<TaskActionArguments> = async (
   args,
   hre,
 ) => {
-  const { ref, force } = args;
+  const { rev, force } = args;
   const npmInstall = args.npmInstall ?? hre.config.git.npmInstall;
 
   const origin = new HardhatGitOrigin(hre.config.paths.root);
-  const clone = await origin.checkout(ref);
+  const clone = await origin.checkout(rev);
 
   if (!force && (await clone.isInitialized())) {
     throw new HardhatPluginError(
       pkg.name,
-      `Clone of ref ${ref} already initialized at ${clone.directory}.`,
+      `Clone of rev ${rev} already initialized at ${clone.directory}.`,
     );
   }
 
   await clone.initialize(npmInstall);
 
   console.log(
-    `Checked out ref ${clone.ref} and initialized clone at ${clone.directory}.`,
+    `Checked out rev ${clone.rev} and initialized clone at ${clone.directory}.`,
   );
 };
 

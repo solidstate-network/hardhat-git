@@ -3,13 +3,13 @@ import type { HardhatConfig, HardhatUserConfig } from 'hardhat/types/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
 import path from 'node:path';
 
-export const createHardhatRuntimeEnvironmentAtGitRef = async (
+export const createHardhatRuntimeEnvironmentAtGitRev = async (
   originConfig: HardhatConfig,
-  ref: string = 'HEAD',
+  rev: string = 'HEAD',
   plugins?: HardhatUserConfig['plugins'],
 ): Promise<HardhatRuntimeEnvironment> => {
   const origin = new HardhatGitOrigin(originConfig.paths.root);
-  const clone = await origin.checkout(ref);
+  const clone = await origin.checkout(rev);
 
   if (!(await clone.isInitialized())) {
     await clone.initialize(originConfig.git.npmInstall);
