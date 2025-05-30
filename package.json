@@ -18,7 +18,7 @@
     "hre"
   ],
   "repository": "github:solidstate-network/hardhat-git.git",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "Nick Barry",
   "type": "module",
   "exports": {
