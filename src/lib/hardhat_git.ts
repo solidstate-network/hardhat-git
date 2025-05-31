@@ -1,4 +1,4 @@
-import pkg from '../../package.json';
+import pkg from '../../package.json' with { type: 'json' };
 import envPaths from 'env-paths';
 import { HardhatPluginError } from 'hardhat/plugins';
 import child_process from 'node:child_process';

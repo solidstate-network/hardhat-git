@@ -1,4 +1,4 @@
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 import { createHardhatRuntimeEnvironmentAtGitRev } from '../src/index.js';
 import envPaths from 'env-paths';
 import hre from 'hardhat';

@@ -1,4 +1,4 @@
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 import taskGit from './tasks/git.js';
 import taskGitClone from './tasks/git_clone.js';
 import taskGitList from './tasks/git_list.js';

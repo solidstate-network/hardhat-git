@@ -1,4 +1,4 @@
-import pkg from '../../package.json';
+import pkg from '../../package.json' with { type: 'json' };
 import { HardhatGitOrigin } from './hardhat_git.js';
 import { findDependencyPackageJson } from '@nomicfoundation/hardhat-utils/package';
 import { HardhatPluginError } from 'hardhat/plugins';
