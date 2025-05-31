@@ -12,6 +12,14 @@ export * from './lib/hre.js';
 const plugin: HardhatPlugin = {
   id: pkg.name!,
   npmPackage: pkg.name!,
+  dependencies: [
+    async () => {
+      const { default: HardhatSolidstateUtils } = await import(
+        '@solidstate/hardhat-solidstate-utils'
+      );
+      return HardhatSolidstateUtils;
+    },
+  ],
   tasks: [taskGit, taskGitClone, taskGitList, taskGitRemove, taskGitShow],
   hookHandlers: {
     config: import.meta.resolve('./hooks/config.js'),

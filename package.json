@@ -40,6 +40,7 @@
     "test": "tsx --test"
   },
   "dependencies": {
+    "@solidstate/hardhat-solidstate-utils": "1.0.0-next.3",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "env-paths": "^3.0.0",
