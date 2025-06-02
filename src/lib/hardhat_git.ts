@@ -1,8 +1,14 @@
 import pkg from '../../package.json' with { type: 'json' };
+import {
+  exists,
+  getAllDirectoriesMatching,
+  mkdir,
+  remove,
+  writeUtf8File,
+} from '@nomicfoundation/hardhat-utils/fs';
 import envPaths from 'env-paths';
 import { HardhatPluginError } from 'hardhat/plugins';
 import child_process from 'node:child_process';
-import fs from 'node:fs';
 import path from 'node:path';
 import { detect as detectPackageManager } from 'package-manager-detector';
 import { simpleGit } from 'simple-git';
@@ -25,20 +31,15 @@ export class HardhatGitOrigin {
   public async list() {
     const clones = [];
 
-    if (fs.existsSync(DIRECTORY_BASE)) {
-      const directories = (
-        await fs.promises.readdir(DIRECTORY_BASE, { withFileTypes: true })
-      )
-        .filter((dirent) => dirent.isDirectory())
-        .map((dirent) => dirent.name);
+    const directories = await getAllDirectoriesMatching(DIRECTORY_BASE);
 
-      for (const directory of directories) {
-        if (await this.hasRev(directory)) {
-          const clone = new HardhatGitClone(this, directory);
+    for (const directory of directories) {
+      const rev = path.basename(directory);
+      if (await this.hasRev(rev)) {
+        const clone = new HardhatGitClone(this, rev);
 
-          if (await clone.isInitialized()) {
-            clones.push(clone);
-          }
+        if (await clone.isInitialized()) {
+          clones.push(clone);
         }
       }
     }
@@ -90,14 +91,14 @@ export class HardhatGitClone {
   }
 
   public async isInitialized() {
-    return fs.existsSync(this.successfulSetupIndicatorFile);
+    return await exists(this.successfulSetupIndicatorFile);
   }
 
   public async initialize(npmInstall?: string) {
     // delete the directory in case a clone already exists or
     // a previous setup failed
     await this.remove();
-    await fs.promises.mkdir(this.directory, { recursive: true });
+    await mkdir(this.directory);
 
     await this.checkout();
     await this.installDependencies(npmInstall);
@@ -142,7 +143,7 @@ export class HardhatGitClone {
 
   private async writeIndicatorFile() {
     try {
-      await fs.promises.writeFile(
+      await writeUtf8File(
         this.successfulSetupIndicatorFile,
         new Date().getTime().toString(),
       );
@@ -152,7 +153,7 @@ export class HardhatGitClone {
   }
 
   public async remove() {
-    await fs.promises.rm(this.directory, { recursive: true, force: true });
+    await remove(this.directory);
   }
 
   public async inferPackageManager() {
