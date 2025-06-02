@@ -1,10 +1,10 @@
 import pkg from '../package.json' with { type: 'json' };
 import { createHardhatRuntimeEnvironmentAtGitRev } from '../src/index.js';
+import { exists, remove } from '@nomicfoundation/hardhat-utils/fs';
 import envPaths from 'env-paths';
 import hre from 'hardhat';
 import { task } from 'hardhat/config';
 import assert from 'node:assert';
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import { simpleGit } from 'simple-git';
@@ -28,16 +28,13 @@ const resolveDirectory = (rev: string) =>
 describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
   beforeEach(async () => {
     for (const rev of Object.values(revs)) {
-      assert(!fs.existsSync(resolveDirectory(rev)));
+      assert(!(await exists(resolveDirectory(rev))));
     }
   });
 
   afterEach(async () => {
     for (const rev of Object.values(revs)) {
-      await fs.promises.rm(resolveDirectory(rev), {
-        recursive: true,
-        force: true,
-      });
+      await remove(resolveDirectory(rev));
     }
   });
 
@@ -48,7 +45,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
     );
 
     assert.equal(resolveDirectory(revs.pnpm), gitHre.config.paths.root);
-    assert(fs.existsSync(gitHre.config.paths.root));
+    assert(await exists(gitHre.config.paths.root));
   });
 
   it('clones repository and checks out git rev', async () => {
@@ -84,11 +81,11 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
       'pnpm-lock.yaml',
     );
 
-    assert(fs.existsSync(nodeModulesDirectory));
+    assert(await exists(nodeModulesDirectory));
     // package-lock.json not present because pnpm is the inferred package manager
-    assert(!fs.existsSync(packageLockPath));
+    assert(!(await exists(packageLockPath)));
     // pnpm-lock.yaml present because pnpm is the inferred package manager
-    assert(fs.existsSync(pnpmLockPath));
+    assert(await exists(pnpmLockPath));
   });
 
   it('installs dependencies using package manager present at git rev', async () => {
@@ -114,13 +111,13 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
 
     const yarnLockPath = path.resolve(gitHre.config.paths.root, 'yarn.lock');
 
-    assert(fs.existsSync(nodeModulesDirectory));
+    assert(await exists(nodeModulesDirectory));
     // package-lock.json not present because yarn is the inferred package manager
-    assert(!fs.existsSync(packageLockPath));
+    assert(!(await exists(packageLockPath)));
     // pnpm-lock.yaml not present because yarn is the inferred package manager
-    assert(!fs.existsSync(pnpmLockPath));
+    assert(!(await exists(pnpmLockPath)));
     // yarn.lock present because yarn is the inferred package manager
-    assert(fs.existsSync(yarnLockPath));
+    assert(await exists(yarnLockPath));
   });
 
   it('installs dependencies using arbitrary command: npm install', async () => {
@@ -140,9 +137,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
     );
 
     // package-lock.json only present because of custom command
-    assert(fs.existsSync(packageLockPath));
+    assert(await exists(packageLockPath));
     // pnpm-lock.yaml present because of git tracking
-    assert(fs.existsSync(pnpmLockPath));
+    assert(await exists(pnpmLockPath));
   });
 
   it('installs dependencies using arbitrary command: bun install', async () => {
@@ -159,9 +156,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
     );
 
     // bun.lock only present because of custom command
-    assert(fs.existsSync(bunLockPath));
+    assert(await exists(bunLockPath));
     // pnpm-lock.yaml present because of git tracking
-    assert(fs.existsSync(pnpmLockPath));
+    assert(await exists(pnpmLockPath));
   });
 
   it('installs dependencies using arbitrary command: yarn install', async () => {
@@ -178,9 +175,9 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
     );
 
     // yarn.lock only present because of custom command
-    assert(fs.existsSync(yarnLockPath));
+    assert(await exists(yarnLockPath));
     // pnpm-lock.yaml present because of git tracking
-    assert(fs.existsSync(pnpmLockPath));
+    assert(await exists(pnpmLockPath));
   });
 
   it('registers plugins', async () => {
