@@ -1,10 +1,10 @@
-import { TASK_GIT_CLONE } from '../task_names.js';
+import { TASK_GIT_CHECKOUT } from '../task_names.js';
 import { task } from 'hardhat/config';
 import { ArgumentType } from 'hardhat/types/arguments';
 
-export default task(TASK_GIT_CLONE)
+export default task(TASK_GIT_CHECKOUT)
   .setDescription(
-    'Create a clone of the current git repository at a specified revision',
+    'Create a temporary clone of the current git repository at a specified revision',
   )
   .addPositionalArgument({
     name: 'rev',
@@ -21,5 +21,5 @@ export default task(TASK_GIT_CLONE)
     name: 'force',
     description: 'Delete existing clone and clone again',
   })
-  .setAction(import.meta.resolve('../actions/git_clone.js'))
+  .setAction(import.meta.resolve('../actions/git_checkout.js'))
   .build();

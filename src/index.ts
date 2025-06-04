@@ -1,6 +1,6 @@
 import pkg from '../package.json' with { type: 'json' };
 import taskGit from './tasks/git.js';
-import taskGitClone from './tasks/git_clone.js';
+import taskGitCheckout from './tasks/git_checkout.js';
 import taskGitList from './tasks/git_list.js';
 import taskGitRemove from './tasks/git_remove.js';
 import taskGitShow from './tasks/git_show.js';
@@ -20,7 +20,7 @@ const plugin: HardhatPlugin = {
       return HardhatSolidstateUtils;
     },
   ],
-  tasks: [taskGit, taskGitClone, taskGitList, taskGitRemove, taskGitShow],
+  tasks: [taskGit, taskGitCheckout, taskGitList, taskGitRemove, taskGitShow],
   hookHandlers: {
     config: import.meta.resolve('./hooks/config.js'),
   },
