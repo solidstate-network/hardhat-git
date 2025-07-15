@@ -34,12 +34,7 @@ Optionally declare the plugin as a dependency to expose the helper tasks:
 
 ```typescript
 const plugin: HardhatPlugin = {
-  dependencies: [
-    async () => {
-      const { default: HardhatGit } = await import('@solidstate/hardhat-git');
-      return HardhatGit;
-    },
-  ],
+  dependencies: [async () => (await import('@solidstate/hardhat-git')).default],
 };
 ```
 
