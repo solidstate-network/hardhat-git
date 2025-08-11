@@ -12,12 +12,10 @@ export * from './lib/hre.js';
 const plugin: HardhatPlugin = {
   id: pkg.name!,
   npmPackage: pkg.name!,
-  dependencies: [
-    async () => (await import('@solidstate/hardhat-solidstate-utils')).default,
-  ],
+  dependencies: () => [import('@solidstate/hardhat-solidstate-utils')],
   tasks: [taskGit, taskGitCheckout, taskGitList, taskGitRemove, taskGitShow],
   hookHandlers: {
-    config: import.meta.resolve('./hooks/config.js'),
+    config: () => import('./hooks/config.js'),
   },
 };
 

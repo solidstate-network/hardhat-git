@@ -21,5 +21,5 @@ export default task(TASK_GIT_CHECKOUT)
     name: 'force',
     description: 'Delete existing clone and clone again',
   })
-  .setAction(import.meta.resolve('../actions/git_checkout.js'))
+  .setAction(() => import('../actions/git_checkout.js'))
   .build();

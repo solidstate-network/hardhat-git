@@ -10,5 +10,5 @@ export default task(TASK_GIT_SHOW)
     description: 'Git revision whose clone print information about',
     defaultValue: 'HEAD',
   })
-  .setAction(import.meta.resolve('../actions/git_show.js'))
+  .setAction(() => import('../actions/git_show.js'))
   .build();

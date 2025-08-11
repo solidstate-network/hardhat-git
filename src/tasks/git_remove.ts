@@ -11,5 +11,5 @@ export default task(TASK_GIT_REMOVE)
       'List of git revisions whose clones to delete (defaults to all clones)',
     defaultValue: [],
   })
-  .setAction(import.meta.resolve('../actions/git_remove.js'))
+  .setAction(() => import('../actions/git_remove.js'))
   .build();
