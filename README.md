@@ -41,11 +41,11 @@ const plugin: HardhatPlugin = {
 Load plugin standalone in Hardhat config:
 
 ```typescript
-import HardhatGit from '@solidstate/hardhat-git';
+import hardhatGit from '@solidstate/hardhat-git';
 
 const config: HardhatUserConfig = {
   plugins: [
-    HardhatGit,
+    hardhatGit,
   ],
   git: {
     ... // see table for configuration options
