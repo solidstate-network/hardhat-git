@@ -23,7 +23,7 @@ const revs = {
 };
 
 const resolveDirectory = (rev: string) =>
-  path.resolve(envPaths(pkg.name).temp, rev);
+  path.resolve(envPaths(pkg.name.replace(/\//g, '-')).temp, rev);
 
 describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
   beforeEach(async () => {

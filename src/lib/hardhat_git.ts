@@ -13,7 +13,7 @@ import path from 'node:path';
 import { detect as detectPackageManager } from 'package-manager-detector';
 import { simpleGit } from 'simple-git';
 
-const DIRECTORY_BASE = envPaths(pkg.name).temp;
+const DIRECTORY_BASE = envPaths(pkg.name.replace(/\//g, '-')).temp;
 
 // track which package manager has been used to install dependencies for each rev
 // reinstallation using different package managers is unsupported due to module resolution issues
