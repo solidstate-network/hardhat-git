@@ -187,7 +187,7 @@ describe('createHardhatRuntimeEnvironmentAtGitRev', () => {
       id: 'temp',
       tasks: [
         task(taskName)
-          .setAction(async () => {
+          .setInlineAction(async () => {
             return taskName;
           })
           .build(),
