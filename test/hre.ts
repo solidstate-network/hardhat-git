@@ -11,15 +11,15 @@ import { simpleGit } from 'simple-git';
 
 const revs = {
   // pnpm was the package manager in use at this rev
-  pnpm: 'a307fffeeb69102331a671965236f6b87733f2fa',
+  pnpm: '6c493d4b20c98e2e944c152093ce3789b3192ac3',
   // yarn was the package manager in use at this rev
   // it is used for package manager inferrence test
-  yarnInferred: '78a30554cd600c1aef47d2f566167e8fe5e3fbe7',
+  yarnInferred: 'e2ed7861909d9fa5792608673885e6371479b31f',
   // pnpm was the package manager in use at the following revs
   // they are used for npm, yarn, and bun tests
-  npm: '77bdf11772ef59035b3a083b78d86203ebaa471d',
-  bun: '2fb7bea7ae4250335f415ae076b0325edd4dd846',
-  yarn: 'c336c3902b13566dd3df871ab1d4af9bed3f417b',
+  npm: 'c80f29d69550e1da289cb335eb97d6453ade1517',
+  bun: '92267683b6a96ec81726fa0d92488c7e6d61ad89',
+  yarn: '6aaf2ff5647f9fe98e9a69bf307daae00ab29c23',
 };
 
 const resolveDirectory = (rev: string) =>
