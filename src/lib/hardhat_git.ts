@@ -134,15 +134,19 @@ export class HardhatGitClone {
       );
     }
 
-    try {
-      child_process.spawnSync(packageManager, installCommand, {
-        cwd: this.directory,
-        stdio: 'inherit',
-      });
-    } catch (error) {
+    const result = child_process.spawnSync(packageManager, installCommand, {
+      cwd: this.directory,
+      stdio: 'inherit',
+    });
+
+    if (result.error) {
+      throw new HardhatPluginError(pkg.name, result.error.message);
+    }
+
+    if (result.status !== 0) {
       throw new HardhatPluginError(
         pkg.name,
-        error instanceof Error ? error.message : String(error),
+        `${npmInstall} exited with code ${result.status}`,
       );
     }
   }
