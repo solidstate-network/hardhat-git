@@ -72,3 +72,7 @@ Setup Husky to format code on commit:
 ```bash
 pnpm prepare
 ```
+
+### Testing
+
+The test suite verifies package manager inference and explicit overrides for npm, yarn, and bun. In addition to pnpm, you must have **npm**, **yarn**, and **bun** installed and available on your `$PATH` for the tests to pass.
