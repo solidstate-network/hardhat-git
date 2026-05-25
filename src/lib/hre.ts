@@ -43,7 +43,10 @@ export const createHardhatRuntimeEnvironmentAtGitRev = async (
   );
 
   const configPath: string = await findClosestHardhatConfig(directory);
-  const config: HardhatUserConfig = await import(configPath);
+  const configModule = await import(configPath);
+  const config: HardhatUserConfig = {
+    ...(configModule.default ?? configModule),
+  };
 
   if (plugins && plugins.length) {
     config.plugins ??= [];
