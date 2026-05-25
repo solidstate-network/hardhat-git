@@ -1,6 +1,7 @@
 import pkg from '../../package.json' with { type: 'json' };
 import { HardhatGitOrigin } from './hardhat_git.js';
 import { findDependencyPackageJson } from '@nomicfoundation/hardhat-utils/package';
+import { importUserConfig } from 'hardhat/hre';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatConfig, HardhatUserConfig } from 'hardhat/types/config';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types/hre';
@@ -31,7 +32,7 @@ export const createHardhatRuntimeEnvironmentAtGitRev = async (
 
   const { default: packageJson } = await import(packageJsonPath);
 
-  const { createHardhatRuntimeEnvironment, importUserConfig } = await import(
+  const { createHardhatRuntimeEnvironment } = await import(
     path.resolve(path.dirname(packageJsonPath), packageJson.exports['./hre'])
   );
 
