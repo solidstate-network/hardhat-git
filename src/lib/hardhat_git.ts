@@ -113,7 +113,10 @@ export class HardhatGitClone {
       await git.fetch('origin', this.rev, { '--depth': 1 });
       await git.checkout(this.rev);
     } catch (error) {
-      throw new HardhatPluginError(pkg.name, error as string);
+      throw new HardhatPluginError(
+        pkg.name,
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 
@@ -137,7 +140,10 @@ export class HardhatGitClone {
         stdio: 'inherit',
       });
     } catch (error) {
-      throw new HardhatPluginError(pkg.name, error as string);
+      throw new HardhatPluginError(
+        pkg.name,
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 
@@ -148,7 +154,10 @@ export class HardhatGitClone {
         new Date().getTime().toString(),
       );
     } catch (error) {
-      throw new HardhatPluginError(pkg.name, error as string);
+      throw new HardhatPluginError(
+        pkg.name,
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 
